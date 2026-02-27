@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEO Dashboard · ainomics</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #efece7;
+  --paper:   #faf8f5;
+  --white:   #ffffff;
+  --border:  #e0dbd3;
+  --border2: #c8c2b8;
+  --ink:     #1a1714;
+  --ink2:    #3c3730;
+  --muted:   #8a8278;
+  --pale:    #c8c2b8;
+
+  --green:   #2c5240;
+  --green-l: #ecf2ee;
+  --gold:    #896010;
+  --gold-l:  #f3ecdc;
+  --blue:    #253c57;
+  --blue-l:  #e4e9f0;
+  --red:     #792929;
+  --red-l:   #f2e7e7;
+  --amber:   #8a5b10;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Jost', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.page { max-width: 1140px; margin: 0 auto; padding: 44px 36px; }
+
+/* ── HEADER ── */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 22px;
+  border-bottom: 1.5px solid var(--ink);
+  margin-bottom: 36px;
+}
+
+.h-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+.h-method {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.h-right {
+  text-align: right;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.h-client {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink2);
+  display: block;
+  margin-bottom: 1px;
+}
+
+/* ── HERO: AEO SCORE + 3 PILLARS ── */
+.hero {
+  background: var(--white);
+  border: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 220px 1px 1fr;
+  margin-bottom: 12px;
+  min-height: 260px;
+}
+
+/* Score left */
+.hero-score-col {
+  padding: 32px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hs-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.hs-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 96px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -5px;
+}
+.hs-denom {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--pale);
+  letter-spacing: 0;
+}
+
+.hs-delta {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--green);
+  margin-top: 4px;
+}
+
+.hs-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 16px;
+}
+
+/* Divider */
+.hero-vline { background: var(--border); }
+
+/* Pillars right */
+.hero-pillars-col {
+  padding: 28px 32px;
+}
+
+.hp-intro {
+  margin-bottom: 18px;
+}
+.hp-intro-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.hp-intro-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.pillar {
+  border: 1px solid var(--border);
+  background: var(--paper);
+  padding: 16px 14px 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.pillar.g::after { background: var(--green); }
+.pillar.o::after { background: var(--gold); }
+.pillar.b::after { background: var(--blue); }
+
+.p-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 1px;
+}
+.pillar.g .p-val { color: var(--green); }
+.pillar.o .p-val { color: var(--gold); }
+.pillar.b .p-val { color: var(--blue); }
+
+.p-bar-bg {
+  height: 3px;
+  background: var(--border);
+  margin: 7px 0 9px;
+}
+.p-bar-fill { height: 100%; }
+
+.p-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink2);
+  margin-bottom: 4px;
+}
+.p-desc {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+.p-factors {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.p-factor {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+}
+.p-factor-k { color: var(--muted); }
+.p-factor-v { font-weight: 600; color: var(--ink2); }
+
+/* ── KI SCORES ROW (Main focus) ── */
+.ki-scores {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ki-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 24px 20px;
+  position: relative;
+}
+
+.ki-tag {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 1px;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.ki-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 4px;
+}
+
+.ki-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink2);
+  margin-bottom: 3px;
+}
+.ki-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.ki-trend {
+  position: absolute;
+  top: 20px; right: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ── TWO COL ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+}
+.panel-meta { font-size: 10px; color: var(--muted); }
+
+/* Sentiment breakdown */
+.bk-list { display: flex; flex-direction: column; gap: 11px; }
+.bk-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+}
+.bk-name { font-size: 12px; color: var(--ink2); font-weight: 500; }
+.bk-track { height: 4px; background: var(--border); }
+.bk-fill  { height: 100%; }
+.bk-val   {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.sent-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.sent-big {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--green);
+  line-height: 1;
+}
+.sent-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* PR table */
+.media-rows { display: flex; flex-direction: column; }
+.media-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.media-row:last-child { border-bottom: none; }
+.mr-name  { font-size: 12px; font-weight: 600; color: var(--ink); }
+.mr-type  { font-size: 10px; color: var(--muted); }
+.mr-reach {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+  color: var(--ink);
+}
+.mr-reach-s { font-size: 9px; color: var(--muted); text-align: right; }
+.mr-badge {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 1px;
+  white-space: nowrap;
+}
+.mr-badge.yes { background: var(--green-l); color: var(--green); }
+.mr-badge.no  { background: var(--border);  color: var(--muted); }
+
+.pr-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.pr-stat { text-align: center; }
+.pr-stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+}
+.pr-stat-lbl { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+/* ── ACTIONS ── */
+.actions {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 24px;
+  margin-bottom: 12px;
+}
+
+.action-list { display: flex; flex-direction: column; }
+
+.action {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.action:last-child { border-bottom: none; }
+
+.a-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--pale);
+  line-height: 1.2;
+}
+.a-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.a-body  { font-size: 11px; color: var(--muted); line-height: 1.55; }
+.a-badge {
+  display: inline-block; margin-top: 6px;
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 1px;
+}
+.a-impact { text-align: right; white-space: nowrap; padding-top: 2px; }
+.a-impact-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 600;
+  color: var(--green); line-height: 1;
+}
+.a-impact-lbl { font-size: 9px; color: var(--muted); margin-top: 2px; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--muted);
+}
+.f-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: var(--ink2);
+  font-weight: 400;
+  display: block;
+  margin-bottom: 2px;
+}
+.f-powered {
+  font-size: 9px;
+  color: var(--pale);
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+.f-formula {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink2);
+}
+
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-vline { display: none; }
+  .pillars-grid, .ki-scores, .two-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<header>
+  <div>
+    <div class="h-brand">ainomics</div>
+    <div class="h-method">AEO · Ainomics Engine Optimization</div>
+  </div>
+  <div class="h-right">
+    <span class="h-client">Muster GmbH</span>
+    C-Level Briefing · Februar 2025 · Vertraulich
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+
+  <!-- AEO Score -->
+  <div class="hero-score-col">
+    <div>
+      <div class="hs-label">AEO Gesamtscore</div>
+      <div>
+        <span class="hs-number">78</span><span class="hs-denom">/100</span>
+      </div>
+      <div class="hs-delta">↑ +5 Punkte vs. Vormonat</div>
+    </div>
+    <div class="hs-desc">Ihre Marke wird von KI-Systemen wahrgenommen — und positiv bewertet.</div>
+  </div>
+
+  <div class="hero-vline"></div>
+
+  <!-- Pillars -->
+  <div class="hero-pillars-col">
+    <div class="hp-intro">
+      <div class="hp-intro-title">So setzt sich der Score zusammen</div>
+      <div class="hp-intro-sub">Drei gleichwertige Dimensionen · je 0–100</div>
+    </div>
+    <div class="pillars-grid">
+
+      <div class="pillar g">
+        <div class="p-val">84</div>
+        <div class="p-bar-bg"><div class="p-bar-fill" style="width:84%;background:var(--green)"></div></div>
+        <div class="p-name">AI-Präsenz</div>
+        <div class="p-desc">Wie oft und wie prominent erscheinen Sie in KI-Antworten?</div>
+        <div class="p-factors">
+          <div class="p-factor"><span class="p-factor-k">Zitierrate</span><span class="p-factor-v">38 %</span></div>
+          <div class="p-factor"><span class="p-factor-k">Marktanteil (KI)</span><span class="p-factor-v">29 %</span></div>
+          <div class="p-factor"><span class="p-factor-k">Themenabdeckung</span><span class="p-factor-v">54 %</span></div>
+        </div>
+      </div>
+
+      <div class="pillar o">
+        <div class="p-val">71</div>
+        <div class="p-bar-bg"><div class="p-bar-fill" style="width:71%;background:var(--gold)"></div></div>
+        <div class="p-name">PR & Medien</div>
+        <div class="p-desc">Wie stark verstärkt Ihre Medienarbeit die KI-Wahrnehmung?</div>
+        <div class="p-factors">
+          <div class="p-factor"><span class="p-factor-k">Artikel KI-wirksam</span><span class="p-factor-v">4 / 5</span></div>
+          <div class="p-factor"><span class="p-factor-k">Quellenstärke Ø</span><span class="p-factor-v">74 / 100</span></div>
+          <div class="p-factor"><span class="p-factor-k">Expertenstatus</span><span class="p-factor-v">61 %</span></div>
+        </div>
+      </div>
+
+      <div class="pillar b">
+        <div class="p-val">69</div>
+        <div class="p-bar-bg"><div class="p-bar-fill" style="width:69%;background:var(--blue)"></div></div>
+        <div class="p-name">Markenimage</div>
+        <div class="p-desc">Wie korrekt und positiv stellt die KI Ihre Marke dar?</div>
+        <div class="p-factors">
+          <div class="p-factor"><span class="p-factor-k">Tonalität</span><span class="p-factor-v">+0.74</span></div>
+          <div class="p-factor"><span class="p-factor-k">Markenkonsistenz</span><span class="p-factor-v">67 %</span></div>
+          <div class="p-factor"><span class="p-factor-k">Informationsqualität</span><span class="p-factor-v">43 %</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- KI SCORES — MAIN FOCUS -->
+<div class="ki-scores">
+
+  <div class="ki-card">
+    <span class="ki-tag" style="background:var(--green-l);color:var(--green)">AI-Sichtbarkeit</span>
+    <div class="ki-trend" style="color:var(--green)">↑ +12 %</div>
+    <div class="ki-val" style="color:var(--green)">38 %</div>
+    <div class="ki-title">Zitierrate durch KI</div>
+    <div class="ki-desc">In 38 von 100 KI-Antworten zu Ihrer Branche wird Ihre Marke genannt. Marktdurchschnitt: 22 %.</div>
+  </div>
+
+  <div class="ki-card">
+    <span class="ki-tag" style="background:var(--gold-l);color:var(--gold)">Marktstellung</span>
+    <div class="ki-trend" style="color:var(--green)">↑ +5 %</div>
+    <div class="ki-val" style="color:var(--gold)">29 %</div>
+    <div class="ki-title">KI Share of Voice</div>
+    <div class="ki-desc">Ihr Anteil aller KI-Gespräche in der Branche. Stärkster Mitbewerber hält 43 %.</div>
+  </div>
+
+  <div class="ki-card">
+    <span class="ki-tag" style="background:var(--red-l);color:var(--red)">Handlungsbedarf</span>
+    <div class="ki-trend" style="color:var(--red)">↓ −7 %</div>
+    <div class="ki-val" style="color:var(--red)">43 %</div>
+    <div class="ki-title">Informationsqualität</div>
+    <div class="ki-desc">Nur 43 % der KI-Aussagen über Ihr Unternehmen sind korrekt und aktuell. Ziel: 80 %.</div>
+  </div>
+
+</div>
+
+<!-- SENTIMENT + PR -->
+<div class="two-col">
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Wie spricht die KI über Sie?</div>
+      <div class="panel-meta">Tonalität · 5 Plattformen</div>
+    </div>
+    <div class="sent-hero">
+      <div class="sent-big">+0.74</div>
+      <div class="sent-sub">Überwiegend positiv<br><span style="color:var(--muted)">Skala −1 (negativ) bis +1 (positiv)</span></div>
+    </div>
+    <div class="bk-list">
+      <div class="bk-row">
+        <div class="bk-name">ChatGPT</div>
+        <div class="bk-track"><div class="bk-fill" style="width:82%;background:var(--green)"></div></div>
+        <div class="bk-val" style="color:var(--green)">+0.82</div>
+      </div>
+      <div class="bk-row">
+        <div class="bk-name">Claude</div>
+        <div class="bk-track"><div class="bk-fill" style="width:79%;background:var(--green)"></div></div>
+        <div class="bk-val" style="color:var(--green)">+0.79</div>
+      </div>
+      <div class="bk-row">
+        <div class="bk-name">Perplexity</div>
+        <div class="bk-track"><div class="bk-fill" style="width:71%;background:var(--gold)"></div></div>
+        <div class="bk-val" style="color:var(--gold)">+0.71</div>
+      </div>
+      <div class="bk-row">
+        <div class="bk-name">Gemini</div>
+        <div class="bk-track"><div class="bk-fill" style="width:58%;background:var(--amber)"></div></div>
+        <div class="bk-val" style="color:var(--amber)">+0.58</div>
+      </div>
+      <div class="bk-row">
+        <div class="bk-name">Copilot</div>
+        <div class="bk-track"><div class="bk-fill" style="width:44%;background:var(--red)"></div></div>
+        <div class="bk-val" style="color:var(--red)">+0.44</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">PR & Medien als KI-Verstärker</div>
+      <div class="panel-meta">Earned Media · 30 Tage</div>
+    </div>
+    <div class="pr-stats">
+      <div class="pr-stat">
+        <div class="pr-stat-val">5</div>
+        <div class="pr-stat-lbl">Medien­platzierungen</div>
+      </div>
+      <div class="pr-stat" style="border-left:1px solid var(--border);border-right:1px solid var(--border);">
+        <div class="pr-stat-val">4/5</div>
+        <div class="pr-stat-lbl">Von KI aufgegriffen</div>
+      </div>
+      <div class="pr-stat">
+        <div class="pr-stat-val">+31%</div>
+        <div class="pr-stat-lbl">Mehr KI-Zitierungen</div>
+      </div>
+    </div>
+    <div class="media-rows">
+      <div class="media-row">
+        <div><div class="mr-name">Der Standard</div><div class="mr-type">Interview</div></div>
+        <div><div class="mr-reach">2,4 Mio.</div><div class="mr-reach-s">Reichweite</div></div>
+        <span class="mr-badge yes">KI ✓</span>
+      </div>
+      <div class="media-row">
+        <div><div class="mr-name">futurezone.at</div><div class="mr-type">Gastkommentar</div></div>
+        <div><div class="mr-reach">920 Tsd.</div><div class="mr-reach-s">Reichweite</div></div>
+        <span class="mr-badge yes">KI ✓</span>
+      </div>
+      <div class="media-row">
+        <div><div class="mr-name">Format Magazin</div><div class="mr-type">Expertenbeitrag</div></div>
+        <div><div class="mr-reach">380 Tsd.</div><div class="mr-reach-s">Reichweite</div></div>
+        <span class="mr-badge yes">KI ✓</span>
+      </div>
+      <div class="media-row">
+        <div><div class="mr-name">WirtschaftsBlatt</div><div class="mr-type">Pressemitteilung</div></div>
+        <div><div class="mr-reach">145 Tsd.</div><div class="mr-reach-s">Reichweite</div></div>
+        <span class="mr-badge no">Nicht indexiert</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ACTIONS -->
+<div class="actions">
+  <div class="panel-head">
+    <div class="panel-title">Empfohlene Maßnahmen</div>
+    <div class="panel-meta">Priorisiert nach Wirkung · nächste 30 Tage</div>
+  </div>
+  <div class="action-list">
+
+    <div class="action">
+      <div class="a-num">1</div>
+      <div>
+        <div class="a-title">Informationsqualität für KI korrigieren</div>
+        <div class="a-body">KI-Systeme liefern veraltete Informationen zu Produkten und Leistungen. Website und FAQ-Seiten aktualisieren — der direkteste Hebel für bessere KI-Antworten.</div>
+        <span class="a-badge" style="background:var(--red-l);color:var(--red)">Dringend · 3 Wochen</span>
+      </div>
+      <div class="a-impact"><div class="a-impact-val">+18 Pkt</div><div class="a-impact-lbl">AEO Score</div></div>
+    </div>
+
+    <div class="action">
+      <div class="a-num">2</div>
+      <div>
+        <div class="a-title">Copilot gezielt bespielen</div>
+        <div class="a-body">Schwächster Sentiment-Wert aller Plattformen. Medienplatzierungen in Bing-indizierten Medien priorisieren.</div>
+        <span class="a-badge" style="background:var(--gold-l);color:var(--gold)">Empfohlen · 4 Wochen</span>
+      </div>
+      <div class="a-impact"><div class="a-impact-val">+12 %</div><div class="a-impact-lbl">Mehr Traffic</div></div>
+    </div>
+
+    <div class="action">
+      <div class="a-num">3</div>
+      <div>
+        <div class="a-title">PR auf KI-wirksame Medien fokussieren</div>
+        <div class="a-body">Künftig Outlets priorisieren, die nachweislich von KI-Systemen als Quellen genutzt werden — verdoppelt den PR-Return.</div>
+        <span class="a-badge" style="background:var(--blue-l);color:var(--blue)">Strategisch · laufend</span>
+      </div>
+      <div class="a-impact"><div class="a-impact-val">× 2</div><div class="a-impact-lbl">PR-Wirkung</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <span class="f-brand">ainomics GmbH · Wien</span>
+    office@ainomics.at · +43 1 992 98 53-0
+    <div class="f-powered">Datenbasis: otterly.ai · AEO ist eine eingetragene Methode von ainomics</div>
+  </div>
+  <div class="f-formula">AEO = AI-Präsenz × PR-Verstärkung × Markenklarheit</div>
+  <div style="text-align:right">
+    Vertraulich · C-Level<br>Nächste Auswertung: 7 Tage
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
