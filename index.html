@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM-Suchoptimierung | ainomics</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand:    #2E7287;
+    --brand-dk: #1f5164;
+    --brand-lt: #3d8fa5;
+    --primary:  #1f3d4a;
+    --accent:   #2E7287;
+    --bg:       #eef3f5;
+    --surface:  #ffffff;
+    --border:   #c8dce3;
+    --text:     #1f3d4a;
+    --muted:    #4a7585;
+    --green:    #1a9e6e;
+    --red:      #c0392b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Montserrat', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+
+  /* Brand bar */
+  .brand-bar { background: var(--brand); border-radius: 14px; margin-bottom: 28px; }
+  .brand-bar-inner { display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; }
+  .brand-logo { display: flex; flex-direction: column; gap: 3px; text-decoration: none; }
+  .brand-logo-wordmark { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1; }
+  .brand-logo-wordmark sup { font-size: 13px; font-weight: 400; vertical-align: super; }
+  .brand-logo-tagline { font-size: 11.5px; font-weight: 400; color: rgba(255,255,255,0.7); letter-spacing: 3.5px; }
+  .brand-bar-right { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #1f5164 0%, #2E7287 50%, #1f5164 100%); border-radius: 16px; padding: 52px 52px 44px; margin-bottom: 36px; color: white; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; right: -80px; top: -80px; width: 380px; height: 380px; background: radial-gradient(circle, rgba(93,188,210,0.15) 0%, transparent 70%); }
+  .hero-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 14px; }
+  .hero h1 { font-size: 40px; font-weight: 900; line-height: 1.1; margin-bottom: 14px; }
+  .hero h1 em { font-style: normal; color: rgba(255,255,255,0.65); font-weight: 700; }
+  .hero-sub { font-size: 16px; color: rgba(255,255,255,0.65); max-width: 600px; line-height: 1.7; margin-bottom: 36px; }
+  .hero-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.15); }
+  .hero-stat .val { font-size: 26px; font-weight: 800; color: #fff; }
+  .hero-stat .lbl { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 2px; line-height: 1.4; }
+
+  /* Chapter intro label */
+  .section-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+  /* Category grid */
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin-bottom: 40px; }
+  .cat-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s; }
+  .cat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(46,114,135,0.13); }
+  .cat-card-top { padding: 28px 28px 20px; flex: 1; }
+  .cat-card-num { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .cat-card-icon { font-size: 36px; margin-bottom: 14px; display: block; }
+  .cat-card h2 { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 10px; line-height: 1.25; }
+  .cat-card p { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+  .cat-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cat-tag { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; background: #e4f0f4; color: var(--brand-dk); }
+  .cat-card-footer { padding: 14px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .cat-card-cta { font-size: 12px; font-weight: 700; color: var(--brand); letter-spacing: 0.3px; }
+  .cat-card-arrow { font-size: 16px; color: var(--brand); }
+
+  /* Color accents per card */
+  .cc-1 { border-top: 4px solid #2E7287; }
+  .cc-2 { border-top: 4px solid #3d8fa5; }
+  .cc-3 { border-top: 4px solid #1a9e6e; }
+  .cc-4 { border-top: 4px solid #1f5164; }
+  .cc-5 { border-top: 4px solid #5aacbf; }
+  .cc-6 { border-top: 4px solid #4a7585; }
+
+  /* Footer */
+  .footer { background: var(--brand-dk); color: rgba(255,255,255,0.5); border-radius: 12px; padding: 22px 32px; font-size: 12px; line-height: 1.8; }
+  .footer-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size: 18px; font-weight: 800; color: #fff; }
+  .footer-logo-tag { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 3px; display: block; margin-top: 2px; }
+  .footer a { color: rgba(255,255,255,0.35); text-decoration: none; }
+  .footer strong { color: rgba(255,255,255,0.8); }
+
+  @media (max-width: 700px) {
+    .hero { padding: 32px 24px; }
+    .hero h1 { font-size: 26px; }
+    .brand-bar-inner { padding: 16px 20px; }
+    .brand-logo-wordmark { font-size: 22px; }
+    .cat-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Brand bar -->
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <div class="brand-bar-right">LLM Intelligence · 2025/2026</div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-label">Agentur Intelligence Brief · 2025/2026</div>
+    <h1>LLM-Suchoptimierung:<br><em>Das neue Suchparadigma</em></h1>
+    <p class="hero-sub">KI-Systeme wie ChatGPT, Perplexity, Google AI Overviews und Copilot verändern grundlegend, wie Marken entdeckt werden. Dieses Briefing zeigt, was sich verändert hat — und was Ihre Agentur dagegen tun kann.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="val">13%</div>
+        <div class="lbl">Google-Suchen zeigen bereits KI-Overviews</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val">~1 Mrd.</div>
+        <div class="lbl">wöchentlich aktive ChatGPT-Nutzer</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val">60%</div>
+        <div class="lbl">B2B-Käufer nutzen KI für Recherchen</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val">2027</div>
+        <div class="lbl">Gartner: 25% Rückgang klass. Suchvolumen</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val">0</div>
+        <div class="lbl">Korrelation Google-Rang #1 → LLM-Zitierung</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category grid -->
+  <div class="section-label">Kapitelübersicht — Wählen Sie einen Bereich</div>
+  <div class="cat-grid">
+
+    <a class="cat-card cc-1" href="01-der-wandel.html">
+      <div class="cat-card-top">
+        <div class="cat-card-num">Kapitel 01</div>
+        <span class="cat-card-icon">🔍</span>
+        <h2>Der Wandel</h2>
+        <p>Klassisches SEO vs. LLM-Suchoptimierung im direkten Vergleich — und die KI-Plattform-Landschaft, auf der Ihre Kunden jetzt präsent sein müssen.</p>
+        <div class="cat-card-tags">
+          <span class="cat-tag">SEO vs. GEO</span>
+          <span class="cat-tag">7 KI-Plattformen</span>
+          <span class="cat-tag">Vergleichsanalyse</span>
+        </div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-cta">Kapitel öffnen</span>
+        <span class="cat-card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="cat-card cc-2" href="02-die-argumente.html">
+      <div class="cat-card-top">
+        <div class="cat-card-num">Kapitel 02</div>
+        <span class="cat-card-icon">💬</span>
+        <h2>Die 10 Argumente</h2>
+        <p>Die zehn stärksten Argumente, warum Ihre Kunden jetzt handeln müssen — mit Daten, Beweisen und Dringlichkeitsbewertung für jedes Argument.</p>
+        <div class="cat-card-tags">
+          <span class="cat-tag">10 Argumente</span>
+          <span class="cat-tag">Dringlichkeit</span>
+          <span class="cat-tag">Kunden-Pitch</span>
+        </div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-cta">Kapitel öffnen</span>
+        <span class="cat-card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="cat-card cc-3" href="03-leistungsportfolio.html">
+      <div class="cat-card-top">
+        <div class="cat-card-num">Kapitel 03</div>
+        <span class="cat-card-icon">🛠️</span>
+        <h2>Leistungsportfolio</h2>
+        <p>Das dreiphasige Agentur-Modell: Analysieren · Optimieren · Entwickeln — mit vollständigem Leistungskatalog über 18 konkrete Services.</p>
+        <div class="cat-card-tags">
+          <span class="cat-tag">3 Phasen</span>
+          <span class="cat-tag">18 Services</span>
+          <span class="cat-tag">Deliverables</span>
+        </div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-cta">Kapitel öffnen</span>
+        <span class="cat-card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="cat-card cc-4" href="04-zielkunden.html">
+      <div class="cat-card-top">
+        <div class="cat-card-num">Kapitel 04</div>
+        <span class="cat-card-icon">🎯</span>
+        <h2>Zielkunden</h2>
+        <p>Acht Kundensegmente mit konkreten Schmerzpunkten, Dringlichkeit und individuellem Pitch — von B2B-SaaS bis zu Führungskräften.</p>
+        <div class="cat-card-tags">
+          <span class="cat-tag">8 Segmente</span>
+          <span class="cat-tag">Schmerzpunkte</span>
+          <span class="cat-tag">Pitch-Guide</span>
+        </div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-cta">Kapitel öffnen</span>
+        <span class="cat-card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="cat-card cc-5" href="05-wie-llms-entscheiden.html">
+      <div class="cat-card-top">
+        <div class="cat-card-num">Kapitel 05</div>
+        <span class="cat-card-icon">🧠</span>
+        <h2>Wie LLMs entscheiden</h2>
+        <p>Die acht Faktoren, nach denen KI-Systeme eine Marke bewerten und zitieren — von Entity-Klarheit bis technischer Zugänglichkeit.</p>
+        <div class="cat-card-tags">
+          <span class="cat-tag">8 Faktoren</span>
+          <span class="cat-tag">Entity-Logik</span>
+          <span class="cat-tag">Zitierkriterien</span>
+        </div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-cta">Kapitel öffnen</span>
+        <span class="cat-card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="cat-card cc-6" href="06-messframework.html">
+      <div class="cat-card-top">
+        <div class="cat-card-num">Kapitel 06</div>
+        <span class="cat-card-icon">📏</span>
+        <h2>Messframework</h2>
+        <p>Neue KPIs für die KI-Suche — von der Zitierrate über KI-Share-of-Voice bis zum RAG-Zugänglichkeits-Index.</p>
+        <div class="cat-card-tags">
+          <span class="cat-tag">8 neue KPIs</span>
+          <span class="cat-tag">Zitierrate</span>
+          <span class="cat-tag">KI-SOV</span>
+        </div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-cta">Kapitel öffnen</span>
+        <span class="cat-card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">ainomics<sup style="font-size:10px;font-weight:400;">®</sup></div>
+        <span class="footer-logo-tag">visible results</span>
+      </div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Über dieses Briefing:</strong> Strategische Beratungsressource für LLM-Suchoptimierung (GEO / AEO / KI-Suchoptimierung). Alle Statistiken aus Gartner, DataReportal, BrightEdge, 2024–2025.<br>
+    <strong>Haftungsausschluss:</strong> LLM-Verhalten variiert je nach Plattform und ändert sich mit Modell-Updates. Stand Q1 2026.
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messframework | ainomics LLM-Suchoptimierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5; --primary:#1f3d4a; --bg:#eef3f5; --surface:#fff; --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585; --green:#1a9e6e; --red:#c0392b; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .page-header { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:40px 44px; margin-bottom:28px; color:white; position:relative; overflow:hidden; }
+  .page-header::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:radial-gradient(circle,rgba(93,188,210,0.15) 0%,transparent 70%); }
+  .page-header .ph-num { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+  .page-header h1 { font-size:32px; font-weight:900; line-height:1.15; margin-bottom:10px; }
+  .page-header p { font-size:15px; color:rgba(255,255,255,0.65); max-width:600px; line-height:1.65; }
+  .section { margin-bottom:32px; }
+  .section-title { font-size:17px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .icon { width:26px; height:26px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:white; font-size:13px; flex-shrink:0; background:var(--brand-lt); }
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; margin-bottom:28px; }
+  .kpi-card { background:var(--surface); border-radius:14px; border:1px solid var(--border); border-left:4px solid var(--brand); padding:22px; }
+  .kpi-card .kpi-name { font-size:14px; font-weight:800; color:var(--primary); margin-bottom:6px; }
+  .kpi-card .kpi-def { font-size:12.5px; color:var(--muted); line-height:1.6; margin-bottom:10px; }
+  .kpi-card .kpi-meta { display:flex; flex-direction:column; gap:4px; }
+  .kpi-meta-row { display:flex; gap:8px; align-items:baseline; font-size:11px; }
+  .kpi-meta-label { font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; width:70px; flex-shrink:0; }
+  .kpi-meta-val { color:var(--text); font-weight:500; }
+  .kpi-card .kpi-replaces { margin-top:10px; font-size:11px; font-weight:700; color:var(--brand); padding:5px 10px; background:#eef3f5; border-radius:6px; display:inline-block; }
+  .table-wrap { overflow-x:auto; border-radius:10px; border:1px solid var(--border); background:var(--surface); margin-bottom:16px; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { background:var(--brand); color:white; font-size:11px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; padding:11px 14px; text-align:left; white-space:nowrap; }
+  tbody tr { border-bottom:1px solid var(--border); }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:#e5f0f4; }
+  tbody td { padding:11px 14px; font-size:13px; vertical-align:top; }
+  td.bold { font-weight:700; }
+  .cta-box { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:32px 36px; color:white; margin-top:12px; }
+  .cta-box h3 { font-size:22px; font-weight:900; margin-bottom:10px; }
+  .cta-box p { font-size:14px; color:rgba(255,255,255,0.7); line-height:1.65; margin-bottom:20px; max-width:560px; }
+  .cta-links { display:flex; flex-wrap:wrap; gap:12px; }
+  .cta-link { font-size:12px; font-weight:700; padding:10px 20px; border-radius:8px; text-decoration:none; display:inline-block; }
+  .cta-link-primary { background:white; color:var(--brand-dk); }
+  .cta-link-secondary { background:rgba(255,255,255,0.12); color:white; border:1px solid rgba(255,255,255,0.25); }
+  .page-nav { display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); }
+  .page-nav a { font-size:12px; font-weight:700; color:var(--brand); text-decoration:none; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+  .page-nav a:hover { background:#e4f0f4; }
+  .footer { background:var(--brand-dk); color:rgba(255,255,255,0.5); border-radius:12px; padding:20px 28px; font-size:12px; line-height:1.8; margin-top:32px; }
+  .footer strong { color:rgba(255,255,255,0.8); } .footer a { color:rgba(255,255,255,0.35); text-decoration:none; }
+  .footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size:16px; font-weight:800; color:#fff; }
+  @media (max-width:700px) { .page-header { padding:28px 24px; } .page-header h1 { font-size:24px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <a class="nav-back" href="index.html">← Zurück zur Übersicht</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a>
+    <span>›</span>
+    <span>Kapitel 06 — Messframework</span>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-num">Kapitel 06 von 06</div>
+    <h1>📏 Messframework</h1>
+    <p>Neue KPIs für die KI-Suche — von der Zitierrate über KI-Share-of-Voice bis zum RAG-Zugänglichkeits-Index.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">📏</span> Von Traffic-Metriken zu KI-Sichtbarkeits-KPIs</div>
+    <div class="kpi-grid">
+
+      <div class="kpi-card" style="border-left-color:#2E7287;">
+        <div class="kpi-name">KI-Zitierrate</div>
+        <div class="kpi-def">% der Ziel-Anfragen, bei denen die Marke in KI-Antworten erwähnt wird</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Systematisches Prompt-Testing (wöchentlich)</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">Top-3-Erwähnung in der Kategorie</span></div>
+        </div>
+        <span class="kpi-replaces">Ersetzt: Keyword-Ranking</span>
+      </div>
+
+      <div class="kpi-card" style="border-left-color:#3d8fa5;">
+        <div class="kpi-name">KI-Share-of-Voice (SOV)</div>
+        <div class="kpi-def">Markenerwähnungen als % aller Markenerwähnungen in der Kategorie auf KI-Plattformen</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Kompetitives Prompt-Testing-Suite</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">Über Wettbewerber-Durchschnitt</span></div>
+        </div>
+        <span class="kpi-replaces">Ersetzt: Organischer Traffic-Anteil</span>
+      </div>
+
+      <div class="kpi-card" style="border-left-color:#1a9e6e;">
+        <div class="kpi-name">Narrativ-Genauigkeits-Score</div>
+        <div class="kpi-def">% KI-generierter Markenbeschreibungen, die faktisch korrekt und on-message sind</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Manuelle + automatisierte Markenbeschreibungs-Prüfung</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">&gt;90% Genauigkeit</span></div>
+        </div>
+        <span class="kpi-replaces">Neue Metrik — kein klassisches Äquivalent</span>
+      </div>
+
+      <div class="kpi-card" style="border-left-color:#1f5164;">
+        <div class="kpi-name">Entity-Vollständigkeits-Score</div>
+        <div class="kpi-def">Vollständigkeit der Entity-Daten in Knowledge Graph, Wikidata, schema.org</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Entity-Audit-Tool (strukturiertes Scoring)</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">&gt;85% Vollständigkeit</span></div>
+        </div>
+        <span class="kpi-replaces">Ergänzt: Domain Authority</span>
+      </div>
+
+      <div class="kpi-card" style="border-left-color:#5aacbf;">
+        <div class="kpi-name">Zitierquellen-Abdeckung</div>
+        <div class="kpi-def">Anzahl autoritativer Drittquellen, die als LLM-Zitierquellen bestätigt werden können</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Citation Source Map + Reverse Engineering</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">10+ autoritative Quellen</span></div>
+        </div>
+        <span class="kpi-replaces">Ersetzt: Backlink-Anzahl</span>
+      </div>
+
+      <div class="kpi-card" style="border-left-color:#4a7585;">
+        <div class="kpi-name">Prompt-Antwort-Sentiment</div>
+        <div class="kpi-def">Durchschnittliches Sentiment von KI-Antworten, die die Marke in Ziel-Anfragen erwähnen</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Sentiment-Scoring von Prompt-Test-Outputs</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">Positive / neutrale Dominanz</span></div>
+        </div>
+        <span class="kpi-replaces">Ergänzt: Marken-Sentiment-Tracking</span>
+      </div>
+
+      <div class="kpi-card" style="border-left-color:#2E7287;">
+        <div class="kpi-name">Plattform-Abdeckungs-Score</div>
+        <div class="kpi-def">Anzahl der KI-Plattformen, auf denen die Marke konsistent zitiert wird</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Multi-Plattform-Prompt-Testing</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">Präsenz auf 5+ Plattformen</span></div>
+        </div>
+        <span class="kpi-replaces">Neue Metrik</span>
+      </div>
+
+      <div class="kpi-card" style="border-left-color:#3d8fa5;">
+        <div class="kpi-name">RAG-Zugänglichkeits-Index</div>
+        <div class="kpi-def">Technischer Score für Content-Zugänglichkeit durch RAG-fähige Enterprise-KI</div>
+        <div class="kpi-meta">
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Messung</span><span class="kpi-meta-val">Technisches Audit: Schema, Crawlbarkeit, Struktur</span></div>
+          <div class="kpi-meta-row"><span class="kpi-meta-label">Ziel</span><span class="kpi-meta-val">Score &gt;80/100</span></div>
+        </div>
+        <span class="kpi-replaces">Ergänzt: Core Web Vitals</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h3>Bereit für Ihr erstes LLM-Sichtbarkeits-Audit?</h3>
+    <p>ainomics analysiert, wie KI-Systeme Ihre Marke heute darstellen — und entwickelt eine Strategie, um Ihre Zitierrate, Ihr Narrativ und Ihren KI-Share-of-Voice systematisch zu verbessern.</p>
+    <div class="cta-links">
+      <a class="cta-link cta-link-primary" href="https://ainomics.at/" target="_blank">ainomics.at besuchen →</a>
+      <a class="cta-link cta-link-secondary" href="index.html">← Zurück zur Übersicht</a>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a href="05-wie-llms-entscheiden.html">← Kapitel 05: Wie LLMs entscheiden</a>
+    <a href="index.html">↑ Zur Übersicht</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo">ainomics<sup style="font-size:9px;font-weight:400;">®</sup> <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:2px;">visible results</span></div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Wichtigste Quellen:</strong> Gartner Digital Markets Research 2025 · DataReportal Digital 2025 · BrightEdge AI Search Report 2024 · Benedict Evans Annual Tech Trends Report 2025 · Search Engine Journal GEO Research 2024 · Rand Fishkin / SparkToro AI Search Visibility Report 2024.<br>
+    <strong>Haftungsausschluss:</strong> LLM-Verhalten variiert je nach Plattform und ändert sich mit Modell-Updates. Stand Q1 2026.
+  </div>
+
+</div>
+</body>
+</html>

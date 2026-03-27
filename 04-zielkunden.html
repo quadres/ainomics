@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zielkunden | ainomics LLM-Suchoptimierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5; --primary:#1f3d4a; --bg:#eef3f5; --surface:#fff; --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585; --green:#1a9e6e; --red:#c0392b; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .page-header { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:40px 44px; margin-bottom:28px; color:white; position:relative; overflow:hidden; }
+  .page-header::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:radial-gradient(circle,rgba(93,188,210,0.15) 0%,transparent 70%); }
+  .page-header .ph-num { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+  .page-header h1 { font-size:32px; font-weight:900; line-height:1.15; margin-bottom:10px; }
+  .page-header p { font-size:15px; color:rgba(255,255,255,0.65); max-width:600px; line-height:1.65; }
+  .section { margin-bottom:32px; }
+  .section-title { font-size:17px; font-weight:700; color:var(--primary); margin-bottom:20px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .icon { width:26px; height:26px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:white; font-size:13px; flex-shrink:0; background:var(--brand-dk); }
+  .target-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+  .target-card { background:var(--surface); border-radius:14px; border:1px solid var(--border); padding:26px; display:flex; flex-direction:column; gap:0; }
+  .target-card .tc-accent { height:4px; border-radius:4px; margin-bottom:20px; }
+  .target-card .tc-icon { font-size:36px; margin-bottom:12px; }
+  .target-card h4 { font-size:16px; font-weight:800; color:var(--primary); margin-bottom:10px; line-height:1.25; }
+  .target-card .tc-pain { font-size:13px; color:var(--muted); margin-bottom:14px; line-height:1.65; }
+  .target-card .tc-pitch { font-size:12.5px; font-weight:700; color:var(--brand); padding:10px 14px; background:#eef3f5; border-radius:8px; border-left:3px solid var(--brand); line-height:1.5; }
+  .page-nav { display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); }
+  .page-nav a { font-size:12px; font-weight:700; color:var(--brand); text-decoration:none; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+  .page-nav a:hover { background:#e4f0f4; }
+  .footer { background:var(--brand-dk); color:rgba(255,255,255,0.5); border-radius:12px; padding:20px 28px; font-size:12px; line-height:1.8; margin-top:32px; }
+  .footer strong { color:rgba(255,255,255,0.8); } .footer a { color:rgba(255,255,255,0.35); text-decoration:none; }
+  .footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size:16px; font-weight:800; color:#fff; }
+  @media (max-width:700px) { .page-header { padding:28px 24px; } .page-header h1 { font-size:24px; } .target-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <a class="nav-back" href="index.html">← Zurück zur Übersicht</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a>
+    <span>›</span>
+    <span>Kapitel 04 — Zielkunden</span>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-num">Kapitel 04 von 06</div>
+    <h1>🎯 Zielkunden</h1>
+    <p>Acht Kundensegmente mit konkreten Schmerzpunkten und individuellem Pitch — von B2B-SaaS bis zu öffentlichen Institutionen.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">🎯</span> Kundensegmente — Bedarf, Schmerzpunkte & Pitch</div>
+    <div class="target-grid">
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#2E7287;"></div>
+        <div class="tc-icon">🏢</div>
+        <h4>B2B-Unternehmen & SaaS-Marken</h4>
+        <p class="tc-pain">60% der B2B-Käufer recherchieren Anbieter mit KI, bevor sie erstmals Kontakt aufnehmen. Wird ein Wettbewerber von ChatGPT empfohlen und Sie nicht, verlieren Sie, bevor der Verkaufsprozess beginnt. Bei hochwertigen, volumeinarmen Entscheidungen ist Zitier-Genauigkeit entscheidend.</p>
+        <div class="tc-pitch">→ KI-SOV-Audit + Entity Pages + RAG-Readiness für Enterprise-Beschaffung</div>
+      </div>
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#3d8fa5;"></div>
+        <div class="tc-icon">🛍️</div>
+        <h4>E-Commerce & Konsumgütermarken</h4>
+        <p class="tc-pain">Nutzer fragen KI vor dem Kauf: „Was ist das beste [Produktkategorie]?" Marken, die nicht in der KI-Antwort auftauchen, verlieren die Kauferwägung. Produkt-Schema, Bewertungs-Aggregation und Vergleichssichtbarkeit sind entscheidend.</p>
+        <div class="tc-pitch">→ Produkt-Entity-Optimierung + Bewertungs-Zitier-Strategie + FAQ-Content für Top-Kaufanfragen</div>
+      </div>
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#1a9e6e;"></div>
+        <div class="tc-icon">🏥</div>
+        <h4>Gesundheit, Recht & Finanzdienstleistungen</h4>
+        <p class="tc-pain">Hochriskante Branchen, bei denen LLMs maximale E-E-A-T-Prüfung anwenden. Ungenaue KI-Antworten über Dienstleistungen, Praktiker oder Produkte bergen Compliance- und Reputationsrisiken. Qualifikations- und Expertise-Signale müssen maschinenlesbar sein.</p>
+        <div class="tc-pitch">→ Experten-Entity-Profile + autoritative Content-Architektur + Compliance-konformes KI-Narrativ-Management</div>
+      </div>
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#b87a00;"></div>
+        <div class="tc-icon">🌍</div>
+        <h4>Destinationen & Tourismusmarken</h4>
+        <p class="tc-pain">KI ersetzt die Reisesuche — Nutzer fragen ChatGPT oder Perplexity direkt: „Bestes Hotel in X" oder „Was kann man in Y unternehmen?" Destinationen und Hospitality-Marken brauchen strukturierte Präsenz in KI-Antwortsets für Discovery-Anfragen.</p>
+        <div class="tc-pitch">→ Destinations-Entity-Optimierung + Sehenswürdigkeiten/Objekt-Schema + KI-Reiseanfragen-Mapping</div>
+      </div>
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#c0392b;"></div>
+        <div class="tc-icon">👤</div>
+        <h4>Führungskräfte, Gründer & Personen des öffentlichen Lebens</h4>
+        <p class="tc-pain">KI erstellt einen „Reputations-Snapshot" aus verfügbaren Inhalten. Veraltete Biografien, einseitige Medienberichterstattung oder Wettbewerber-Narrative können dauerhaft definieren, wie eine KI eine Person beschreibt — was Investoren, Partner, Medien und Arbeitgeber beeinflusst.</p>
+        <div class="tc-pitch">→ KI-Persona-Audit + Entity-Aufbau + Narrativ-Kontrolle + laufendes KI-Reputations-Monitoring</div>
+      </div>
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#4a7585;"></div>
+        <div class="tc-icon">🎵</div>
+        <h4>Medien, Entertainment & Kulturmarken</h4>
+        <p class="tc-pain">Künstler, Labels, Studios und Publikationen müssen kontrollieren, wie KI ihr Werk, ihre Geschichte und ihr Katalog zusammenfasst. Lücken in den Trainingsdaten erzeugen Ungenauigkeiten. LLM-Sichtbarkeit für die Entdeckung von Inhalten wird immer kritischer.</p>
+        <div class="tc-pitch">→ Kreative Entity-Architektur + Katalog-strukturierte Daten + KI-Discovery-Optimierung</div>
+      </div>
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#5aacbf;"></div>
+        <div class="tc-icon">🏗️</div>
+        <h4>Startups & Challenger-Marken</h4>
+        <p class="tc-pain">Neue Marken haben keine SEO-Autorität aus der Vergangenheit, können aber von Grund auf LLM-Sichtbarkeit aufbauen — oft schneller als etablierte Wettbewerber. Die KI-Suchlandschaft ist weniger zementiert als Google und bietet echte Chancen für Herausforderer.</p>
+        <div class="tc-pitch">→ LLM-native Markteinführungs-Strategie + Entity-Aufbau von Tag 1 + frühes Zitiergeschwindigkeits-Programm</div>
+      </div>
+
+      <div class="target-card">
+        <div class="tc-accent" style="background:#1f5164;"></div>
+        <div class="tc-icon">🏛️</div>
+        <h4>Institutionen, NGOs & Behörden</h4>
+        <p class="tc-pain">Öffentliche Institutionen brauchen KI, die ihre Dienste, Programme und Expertise korrekt darstellt. Fehlinformationen in KI-Antworten über Regierungsleistungen oder NGO-Arbeit haben direkte gesellschaftliche Auswirkungen. Strukturierte, autoritative, maschinenlesbare öffentliche Informationen sind unverzichtbar.</p>
+        <div class="tc-pitch">→ Autoritäts-Content-Architektur + Public-Service-Schema + KI-Genauigkeits-Monitoring</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a href="03-leistungsportfolio.html">← Kapitel 03: Leistungsportfolio</a>
+    <a href="05-wie-llms-entscheiden.html">Kapitel 05: Wie LLMs entscheiden →</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo">ainomics<sup style="font-size:9px;font-weight:400;">®</sup> <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:2px;">visible results</span></div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Haftungsausschluss:</strong> LLM-Verhalten variiert je nach Plattform und ändert sich mit Modell-Updates. Stand Q1 2026.
+  </div>
+
+</div>
+</body>
+</html>

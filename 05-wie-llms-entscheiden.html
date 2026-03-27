@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wie LLMs entscheiden | ainomics LLM-Suchoptimierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5; --primary:#1f3d4a; --bg:#eef3f5; --surface:#fff; --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585; --green:#1a9e6e; --red:#c0392b; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .page-header { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:40px 44px; margin-bottom:28px; color:white; position:relative; overflow:hidden; }
+  .page-header::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:radial-gradient(circle,rgba(93,188,210,0.15) 0%,transparent 70%); }
+  .page-header .ph-num { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+  .page-header h1 { font-size:32px; font-weight:900; line-height:1.15; margin-bottom:10px; }
+  .page-header p { font-size:15px; color:rgba(255,255,255,0.65); max-width:600px; line-height:1.65; }
+  .section { margin-bottom:32px; }
+  .section-title { font-size:17px; font-weight:700; color:var(--primary); margin-bottom:20px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .icon { width:26px; height:26px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:white; font-size:13px; flex-shrink:0; background:var(--brand); }
+  .factor-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; }
+  .factor-card { background:var(--surface); border-radius:14px; border:1px solid var(--border); padding:24px; position:relative; }
+  .factor-card .fc-num { font-size:42px; font-weight:900; color:var(--brand); line-height:1; margin-bottom:8px; opacity:0.15; position:absolute; right:18px; top:14px; }
+  .factor-card .fc-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .factor-card h4 { font-size:15px; font-weight:800; color:var(--primary); margin-bottom:10px; line-height:1.3; }
+  .factor-card p { font-size:13px; color:var(--muted); line-height:1.65; }
+  .factor-card .fc-bar { height:3px; border-radius:3px; margin-top:16px; }
+  .page-nav { display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); }
+  .page-nav a { font-size:12px; font-weight:700; color:var(--brand); text-decoration:none; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+  .page-nav a:hover { background:#e4f0f4; }
+  .footer { background:var(--brand-dk); color:rgba(255,255,255,0.5); border-radius:12px; padding:20px 28px; font-size:12px; line-height:1.8; margin-top:32px; }
+  .footer strong { color:rgba(255,255,255,0.8); } .footer a { color:rgba(255,255,255,0.35); text-decoration:none; }
+  .footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size:16px; font-weight:800; color:#fff; }
+  @media (max-width:700px) { .page-header { padding:28px 24px; } .page-header h1 { font-size:24px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <a class="nav-back" href="index.html">← Zurück zur Übersicht</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a>
+    <span>›</span>
+    <span>Kapitel 05 — Wie LLMs entscheiden</span>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-num">Kapitel 05 von 06</div>
+    <h1>🧠 Wie LLMs entscheiden</h1>
+    <p>Die acht Faktoren, nach denen KI-Systeme eine Marke bewerten und zitieren — von Entity-Klarheit bis technischer Zugänglichkeit.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">🧠</span> Die 8 Faktoren, nach denen LLMs eine Marke bewerten und zitieren</div>
+    <div class="factor-grid">
+
+      <div class="factor-card">
+        <div class="fc-num">①</div>
+        <div class="fc-label">Faktor 1 — Fundament</div>
+        <h4>Entity-Klarheit</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Ist Ihre Marke klar als Entity definiert?</h4>
+        <p>Name, Typ, Standort, Branche, Gründungsjahr, Schlüsselpersonen — all das muss konsistent in Knowledge Graph, Wikidata und schema.org strukturiert sein. Ohne klare Entity-Definition wird eine Marke von LLMs unzuverlässig oder gar nicht erkannt.</p>
+        <div class="fc-bar" style="background:var(--brand);"></div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-num">②</div>
+        <div class="fc-label">Faktor 2 — Vertrauen</div>
+        <h4>Quellen-Autorität</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Schreiben autoritative Quellen über Sie?</h4>
+        <p>LLMs gewichten Wikipedia, große Nachrichtenmedien, Fachpublikationen, Analysten-Reports und wissenschaftliche Quellen höher als markeneigene Inhalte. Drittanbieter-Autorität ist das primäre Vertrauenssignal — eigene Inhalte zählen kaum allein.</p>
+        <div class="fc-bar" style="background:var(--brand-lt);"></div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-num">③</div>
+        <div class="fc-label">Faktor 3 — Konsistenz</div>
+        <h4>Quellenübergreifende Konsistenz</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Sagen mehrere Quellen dasselbe?</h4>
+        <p>LLMs „triangulieren" — Behauptungen, die in mehreren unabhängigen Quellen erscheinen, werden eher in KI-Antworten aufgenommen. Widersprüchliche Informationen führen zu Auslassung oder Einschränkungen in der Antwort.</p>
+        <div class="fc-bar" style="background:var(--muted);"></div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-num">④</div>
+        <div class="fc-label">Faktor 4 — Struktur</div>
+        <h4>Content-Extrahierbarkeit</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Kann KI Fakten aus Ihren Inhalten leicht extrahieren?</h4>
+        <p>Klare Faktenaussagen, nummerierte Listen, Q&A-Format und strukturierte Daten verbessern die LLM-Extrahierbarkeit erheblich. Vage Marketing-Sprache erzielt nahezu null Punkte — KI bevorzugt faktische, konkrete, präzise Aussagen.</p>
+        <div class="fc-bar" style="background:var(--green);"></div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-num">⑤</div>
+        <div class="fc-label">Faktor 5 — Aktualität</div>
+        <h4>Aktualität & Frische</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Sind Ihre Informationen aktuell?</h4>
+        <p>LLMs mit Web-Suchfähigkeit (Perplexity, Bing Copilot) bevorzugen frische Inhalte. Statische Trainingsdaten-Modelle spiegeln möglicherweise veraltete Informationen wider, wenn Inhalte nicht regelmäßig aktualisiert werden.</p>
+        <div class="fc-bar" style="background:var(--brand-dk);"></div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-num">⑥</div>
+        <div class="fc-label">Faktor 6 — Tiefe</div>
+        <h4>Thematische Tiefe</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Sind Sie die umfassendste Quelle zu Ihrem Thema?</h4>
+        <p>LLMs bevorzugen Quellen, die ein Thema umfassend abdecken. Flache Seiten, die viele Themen oberflächlich behandeln, schneiden schlechter ab als tiefe, autoritative Einzelthemen-Seiten mit vollständiger Faktenabdeckung.</p>
+        <div class="fc-bar" style="background:#5aacbf;"></div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-num">⑦</div>
+        <div class="fc-label">Faktor 7 — Reputation</div>
+        <h4>Sentiment-Balance</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Wie ist die Gesamtstimmung im Quellen-Ökosystem?</h4>
+        <p>LLMs aggregieren Sentiment aus allen Quellen. Ein Muster aus negativen Bewertungen, kritischen Artikeln oder Kontroversen beeinflusst den Ton KI-generierter Markenbeschreibungen — selbst wenn eigene Inhalte positiv sind.</p>
+        <div class="fc-bar" style="background:var(--red);"></div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-num">⑧</div>
+        <div class="fc-label">Faktor 8 — Technik</div>
+        <h4>Technische Zugänglichkeit</h4>
+        <h4 style="font-weight:600;font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:10px;">Können KI-Systeme Ihre Inhalte tatsächlich abrufen?</h4>
+        <p>Korrekte robots.txt-Einstellungen, kein reines JavaScript-Rendering, saubere Crawl-Pfade, API-Zugang wo relevant und schnelle Ladezeiten beeinflussen, ob KI-Systeme Ihre Inhalte aufnehmen können.</p>
+        <div class="fc-bar" style="background:var(--brand);"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a href="04-zielkunden.html">← Kapitel 04: Zielkunden</a>
+    <a href="06-messframework.html">Kapitel 06: Messframework →</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo">ainomics<sup style="font-size:9px;font-weight:400;">®</sup> <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:2px;">visible results</span></div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Haftungsausschluss:</strong> LLM-Verhalten variiert je nach Plattform und ändert sich mit Modell-Updates. Stand Q1 2026.
+  </div>
+
+</div>
+</body>
+</html>

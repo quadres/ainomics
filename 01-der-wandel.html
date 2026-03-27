@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Wandel | ainomics LLM-Suchoptimierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5; --primary:#1f3d4a; --accent:#2E7287; --accent2:#5aacbf; --accent3:#4a7585; --bg:#eef3f5; --surface:#fff; --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585; --green:#1a9e6e; --red:#c0392b; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; display:flex; align-items:center; gap:6px; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .breadcrumb a:hover { text-decoration:underline; }
+  .page-header { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:40px 44px; margin-bottom:28px; color:white; position:relative; overflow:hidden; }
+  .page-header::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:radial-gradient(circle,rgba(93,188,210,0.15) 0%,transparent 70%); }
+  .page-header .ph-num { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+  .page-header h1 { font-size:32px; font-weight:900; line-height:1.15; margin-bottom:10px; }
+  .page-header p { font-size:15px; color:rgba(255,255,255,0.65); max-width:600px; line-height:1.65; }
+  .section { margin-bottom:32px; }
+  .section-title { font-size:17px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .icon { width:26px; height:26px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:white; font-size:13px; flex-shrink:0; }
+  .ic-1 { background:var(--brand); } .ic-2 { background:var(--brand-lt); }
+  .compare-wrap { border-radius:12px; overflow:hidden; border:1px solid var(--border); margin-bottom:16px; }
+  .compare-header { display:grid; grid-template-columns:160px 1fr 1fr; background:var(--brand-dk); }
+  .compare-header div { padding:12px 16px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:rgba(255,255,255,0.7); }
+  .compare-header .ch-new { color:#aad9e5; }
+  .compare-body-row { display:grid; grid-template-columns:160px 1fr 1fr; border-top:1px solid var(--border); }
+  .compare-body-row .cr-label { padding:11px 16px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--muted); background:#eef3f5; }
+  .compare-body-row .cr-old { padding:11px 16px; font-size:12.5px; color:var(--muted); background:#fafafa; border-left:1px solid var(--border); }
+  .compare-body-row .cr-new { padding:11px 16px; font-size:12.5px; color:var(--text); font-weight:500; border-left:1px solid var(--border); background:#f5fafc; }
+  .note { font-size:11.5px; color:var(--muted); font-style:italic; padding:8px 14px; background:#eef3f5; border-radius:6px; border-left:3px solid var(--brand); margin-top:8px; }
+  .platform-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:16px; }
+  .platform-card { background:var(--surface); border-radius:10px; border:1px solid var(--border); padding:16px; text-align:center; }
+  .platform-card .pname { font-size:13px; font-weight:700; margin:8px 0 4px; }
+  .platform-card .ptype { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; }
+  .platform-card .pshare { font-size:22px; font-weight:900; color:var(--brand); }
+  .platform-card .pbadge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px; display:inline-block; margin-top:4px; }
+  .page-nav { display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); }
+  .page-nav a { font-size:12px; font-weight:700; color:var(--brand); text-decoration:none; display:flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+  .page-nav a:hover { background:#e4f0f4; }
+  .footer { background:var(--brand-dk); color:rgba(255,255,255,0.5); border-radius:12px; padding:20px 28px; font-size:12px; line-height:1.8; margin-top:32px; }
+  .footer strong { color:rgba(255,255,255,0.8); }
+  .footer a { color:rgba(255,255,255,0.35); text-decoration:none; }
+  .footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size:16px; font-weight:800; color:#fff; }
+  @media (max-width:700px) { .compare-header,.compare-body-row { grid-template-columns:90px 1fr 1fr; } .page-header { padding:28px 24px; } .page-header h1 { font-size:24px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <a class="nav-back" href="index.html">← Zurück zur Übersicht</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a>
+    <span>›</span>
+    <span>Kapitel 01 — Der Wandel</span>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-num">Kapitel 01 von 06</div>
+    <h1>🔍 Der Wandel</h1>
+    <p>Warum klassisches SEO nicht mehr ausreicht — und wie sich die Suchlandschaft durch KI grundlegend verändert hat.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon ic-1">🔍</span> Klassisches SEO vs. LLM-Suchoptimierung — Was sich verändert hat</div>
+    <div class="compare-wrap">
+      <div class="compare-header">
+        <div>Dimension</div>
+        <div>Klassisches SEO</div>
+        <div class="ch-new">LLM-Suchoptimierung (GEO/AEO)</div>
+      </div>
+      <div class="compare-body-row"><div class="cr-label">Ziel</div><div class="cr-old">Rang #1 in der Google-SERP</div><div class="cr-new">Von KI-Systemen zitiert, erwähnt oder empfohlen werden</div></div>
+      <div class="compare-body-row"><div class="cr-label">Funktionsweise</div><div class="cr-old">Crawling, Indexierung, PageRank-Algorithmus</div><div class="cr-new">Qualität der Trainingsdaten, Entity-Erkennung, RAG-Abruf, Autoritätssignale</div></div>
+      <div class="compare-body-row"><div class="cr-label">Nutzerverhalten</div><div class="cr-old">Nutzer klickt auf blaue Links, besucht die Website</div><div class="cr-new">Nutzer liest KI-generierte Antwort — besucht die Website möglicherweise nie</div></div>
+      <div class="compare-body-row"><div class="cr-label">Kernmetrik</div><div class="cr-old">Keyword-Ranking, organischer Traffic</div><div class="cr-new">Zitierfrequenz, Markenerwähnungsrate, Einbindung in KI-Antworten</div></div>
+      <div class="compare-body-row"><div class="cr-label">Inhaltsformat</div><div class="cr-old">Keyword-optimierte Seiten, Backlinks</div><div class="cr-new">Autoritative Langform-Inhalte, strukturierte Daten, Entity-Markup, FAQ-Schemata</div></div>
+      <div class="compare-body-row"><div class="cr-label">Entscheidungsträger</div><div class="cr-old">Google-Algorithmus (PageRank, E-E-A-T)</div><div class="cr-new">LLM-Trainingsdaten + Echtzeit-Abruf (RAG) + Zitierlogik</div></div>
+      <div class="compare-body-row"><div class="cr-label">Messung</div><div class="cr-old">Search Console, Rankings, CTR</div><div class="cr-new">Prompt-Testing, Zitier-Audits, KI-Share-of-Voice-Tracking</div></div>
+      <div class="compare-body-row"><div class="cr-label">Zeitrahmen</div><div class="cr-old">Monate, um Rankings zu verbessern</div><div class="cr-new">Trainingszyklen + kontinuierlicher Abruf — Kompoundeffekt über Zeit</div></div>
+      <div class="compare-body-row"><div class="cr-label">Plattformen</div><div class="cr-old">Google, Bing</div><div class="cr-new">ChatGPT, Perplexity, Google AI Overviews, Claude, Copilot, Gemini, Meta AI</div></div>
+      <div class="compare-body-row"><div class="cr-label">Zusammenhang?</div><div class="cr-old">—</div><div class="cr-new">Teilweise — aber Rang #1 bei Google garantiert KEINE LLM-Zitierung</div></div>
+    </div>
+    <div class="note">Beide Disziplinen existieren parallel — LLM-Suchoptimierung ersetzt klassisches SEO nicht. Sie ist eine ergänzende Schicht, die sich schnell zum primären Discovery-Kanal für recherche-intensive Suchanfragen entwickelt.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon ic-2">🌐</span> Die KI-Suchlandschaft — Plattformen, auf denen Ihre Kunden präsent sein müssen</div>
+    <div class="platform-grid">
+      <div class="platform-card">
+        <div style="font-size:28px;">🤖</div>
+        <div class="pname">ChatGPT</div>
+        <div class="ptype">OpenAI · GPT-4o</div>
+        <div class="pshare">~1 Mrd.</div>
+        <div style="font-size:10px;color:var(--muted);">wöchentliche Nutzer (2025)</div>
+        <div class="pbadge" style="background:#d1fae5;color:#065f46;margin-top:6px;">Größte Reichweite</div>
+      </div>
+      <div class="platform-card">
+        <div style="font-size:28px;">🔎</div>
+        <div class="pname">Perplexity AI</div>
+        <div class="ptype">Answer Engine</div>
+        <div class="pshare">100M+</div>
+        <div style="font-size:10px;color:var(--muted);">monatliche Anfragen</div>
+        <div class="pbadge" style="background:#d0eaf1;color:#1f5164;margin-top:6px;">Zitiert Quellen</div>
+      </div>
+      <div class="platform-card">
+        <div style="font-size:28px;">🟦</div>
+        <div class="pname">Google AI Overviews</div>
+        <div class="ptype">Google SGE</div>
+        <div class="pshare">13%+</div>
+        <div style="font-size:10px;color:var(--muted);">aller Suchanfragen</div>
+        <div class="pbadge" style="background:#fef3c7;color:#92400e;margin-top:6px;">Kritisch für SEO</div>
+      </div>
+      <div class="platform-card">
+        <div style="font-size:28px;">🧡</div>
+        <div class="pname">Claude (Anthropic)</div>
+        <div class="ptype">Anthropic</div>
+        <div class="pshare" style="font-size:15px;padding-top:4px;">Stark wachsend</div>
+        <div style="font-size:10px;color:var(--muted);">Enterprise + Consumer</div>
+        <div class="pbadge" style="background:#fef3c7;color:#92400e;margin-top:6px;">B2B-Priorität</div>
+      </div>
+      <div class="platform-card">
+        <div style="font-size:28px;">💎</div>
+        <div class="pname">Gemini</div>
+        <div class="ptype">Google DeepMind</div>
+        <div class="pshare" style="font-size:15px;padding-top:4px;">Integriert</div>
+        <div style="font-size:10px;color:var(--muted);">in Google Workspace</div>
+        <div class="pbadge" style="background:#d0eaf1;color:#1f5164;margin-top:6px;">Google-Ökosystem</div>
+      </div>
+      <div class="platform-card">
+        <div style="font-size:28px;">🪟</div>
+        <div class="pname">Microsoft Copilot</div>
+        <div class="ptype">Bing + GPT-4</div>
+        <div class="pshare" style="font-size:15px;padding-top:4px;">Enterprise</div>
+        <div style="font-size:10px;color:var(--muted);">MS 365-Integration</div>
+        <div class="pbadge" style="background:#d1fae5;color:#065f46;margin-top:6px;">B2B-Reichweite</div>
+      </div>
+      <div class="platform-card">
+        <div style="font-size:28px;">🦙</div>
+        <div class="pname">Meta AI</div>
+        <div class="ptype">Llama · Meta</div>
+        <div class="pshare">3,2 Mrd.+</div>
+        <div style="font-size:10px;color:var(--muted);">potenzielle Reichweite</div>
+        <div class="pbadge" style="background:#fce7f3;color:#9d174d;margin-top:6px;">Consumer-Skala</div>
+      </div>
+      <div class="platform-card">
+        <div style="font-size:28px;">🟣</div>
+        <div class="pname">Grok (xAI)</div>
+        <div class="ptype">X / Elon Musk</div>
+        <div class="pshare" style="font-size:15px;padding-top:4px;">Wachsend</div>
+        <div style="font-size:10px;color:var(--muted);">X Premium-Nutzer</div>
+        <div class="pbadge" style="background:#ede9fe;color:#5b21b6;margin-top:6px;">Echtzeit-Daten</div>
+      </div>
+    </div>
+    <div class="note">Jede Plattform hat eine eigene Abruflogik, unterschiedliche Trainings-Datenschnitte und eine eigene Zitierlogik. Eine Marke, die bei ChatGPT sichtbar ist, ist nicht automatisch bei Perplexity oder Google AI Overviews präsent. Plattformspezifische Optimierung ist zwingend erforderlich.</div>
+  </div>
+
+  <div class="page-nav">
+    <a href="index.html">← Übersicht</a>
+    <a href="02-die-argumente.html">Kapitel 02: Die 10 Argumente →</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo">ainomics<sup style="font-size:9px;font-weight:400;">®</sup> <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:2px;">visible results</span></div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Haftungsausschluss:</strong> LLM-Verhalten variiert je nach Plattform und ändert sich mit Modell-Updates. Stand Q1 2026.
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leistungsportfolio | ainomics LLM-Suchoptimierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5; --primary:#1f3d4a; --bg:#eef3f5; --surface:#fff; --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585; --green:#1a9e6e; --red:#c0392b; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .page-header { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:40px 44px; margin-bottom:28px; color:white; position:relative; overflow:hidden; }
+  .page-header::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:radial-gradient(circle,rgba(93,188,210,0.15) 0%,transparent 70%); }
+  .page-header .ph-num { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+  .page-header h1 { font-size:32px; font-weight:900; line-height:1.15; margin-bottom:10px; }
+  .page-header p { font-size:15px; color:rgba(255,255,255,0.65); max-width:600px; line-height:1.65; }
+  .section { margin-bottom:32px; }
+  .section-title { font-size:17px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .icon { width:26px; height:26px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:white; font-size:13px; flex-shrink:0; background:var(--green); }
+  .service-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-bottom:24px; }
+  .service-card { border-radius:14px; padding:28px; color:white; position:relative; overflow:hidden; }
+  .service-card::after { content:''; position:absolute; right:-30px; bottom:-30px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.05); }
+  .sc-analyse  { background:linear-gradient(135deg,#1f3d4a,#2E7287); }
+  .sc-optimise { background:linear-gradient(135deg,#2E7287,#3d8fa5); }
+  .sc-develop  { background:linear-gradient(135deg,#1f5164,#5aacbf); }
+  .service-card .sc-label { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; opacity:0.6; margin-bottom:8px; }
+  .service-card h3 { font-size:22px; font-weight:900; margin-bottom:12px; }
+  .service-card .sc-desc { font-size:13px; opacity:0.75; margin-bottom:16px; line-height:1.65; }
+  .service-card ul { list-style:none; padding:0; }
+  .service-card ul li { font-size:13px; opacity:0.85; padding:4px 0; padding-left:18px; position:relative; }
+  .service-card ul li::before { content:'→'; position:absolute; left:0; opacity:0.5; }
+  .service-card .sc-output { margin-top:16px; padding:10px 14px; background:rgba(255,255,255,0.12); border-radius:8px; font-size:12px; font-weight:600; }
+  .table-wrap { overflow-x:auto; border-radius:10px; border:1px solid var(--border); background:var(--surface); margin-bottom:16px; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { background:var(--brand); color:white; font-size:11px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; padding:11px 14px; text-align:left; white-space:nowrap; }
+  tbody tr { border-bottom:1px solid var(--border); }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:#e5f0f4; }
+  tbody td { padding:11px 14px; font-size:13px; vertical-align:top; }
+  td.bold { font-weight:700; }
+  .tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 9px; border-radius:10px; }
+  .tag-high { background:#d1fae5; color:#065f46; }
+  .tag-med { background:#d0eaf1; color:#1f5164; }
+  .tag-new { background:#fef3c7; color:#92400e; }
+  .page-nav { display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); }
+  .page-nav a { font-size:12px; font-weight:700; color:var(--brand); text-decoration:none; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+  .page-nav a:hover { background:#e4f0f4; }
+  .footer { background:var(--brand-dk); color:rgba(255,255,255,0.5); border-radius:12px; padding:20px 28px; font-size:12px; line-height:1.8; margin-top:32px; }
+  .footer strong { color:rgba(255,255,255,0.8); } .footer a { color:rgba(255,255,255,0.35); text-decoration:none; }
+  .footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size:16px; font-weight:800; color:#fff; }
+  @media (max-width:700px) { .page-header { padding:28px 24px; } .page-header h1 { font-size:24px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <a class="nav-back" href="index.html">← Zurück zur Übersicht</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a>
+    <span>›</span>
+    <span>Kapitel 03 — Leistungsportfolio</span>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-num">Kapitel 03 von 06</div>
+    <h1>🛠️ Leistungsportfolio</h1>
+    <p>Das dreiphasige Agentur-Modell: Analysieren · Optimieren · Entwickeln — mit vollständigem Leistungskatalog über 18 konkrete Services.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">🛠️</span> Dreiphasiges Leistungsmodell</div>
+    <div class="service-grid">
+      <div class="service-card sc-analyse">
+        <div class="sc-label">Phase 1</div>
+        <h3>Analysieren</h3>
+        <p class="sc-desc">Vollständige Diagnose, wie Ihre Marke, Ihr Produkt oder Ihre Persönlichkeit derzeit auf allen großen KI-Systemen erscheint — Lücken, Ungenauigkeiten, Wettbewerbsvorteile und Optimierungspotenziale werden identifiziert.</p>
+        <ul>
+          <li>LLM-Sichtbarkeits-Audit (ChatGPT, Perplexity, Claude, Gemini, Copilot)</li>
+          <li>Entity-Profil-Bewertung (Knowledge Graph, Wikidata, strukturierte Daten)</li>
+          <li>KI-Share-of-Voice vs. Wettbewerber</li>
+          <li>Content-Maschinenlesbarkeits-Score</li>
+          <li>Citation Source Map — welche Quellen LLMs über Sie nutzen</li>
+          <li>Reputations-Narrativ-Audit — was die KI wörtlich über Sie sagt</li>
+          <li>RAG-Readiness-Bewertung für Enterprise/B2B-Kontexte</li>
+          <li>Keyword-zu-Prompt-Migrations-Analyse</li>
+        </ul>
+        <div class="sc-output">📄 Ergebnis: LLM-Sichtbarkeits-Baseline-Report + Prioritäts-Aktionsmatrix</div>
+      </div>
+      <div class="service-card sc-optimise">
+        <div class="sc-label">Phase 2</div>
+        <h3>Optimieren</h3>
+        <p class="sc-desc">Systematische Umsetzung von Optimierungen über Inhalte, Struktur, Entity-Daten und Drittanbieter-Präsenz, um Zitierfrequenz und -genauigkeit auf allen KI-Plattformen zu maximieren.</p>
+        <ul>
+          <li>Entity-Architektur-Aufbau (schema.org, strukturiertes Daten-Markup)</li>
+          <li>KI-optimierte Content-Erstellung (Entity Pages, FAQ-Cluster, Fact Sheets)</li>
+          <li>Knowledge-Graph / Wikipedia / Wikidata-Management</li>
+          <li>Prompt Engineering: Identifikation hochpriorisierter Anfragen</li>
+          <li>Drittanbieter-Zitiergeschwindigkeits-Programm (PR, Medien, Bewertungsplattformen)</li>
+          <li>Technisch: Crawlbarkeit, API-Zugänglichkeit, robots.txt-Review</li>
+          <li>Plattformübergreifende Konsistenz-Ausrichtung</li>
+          <li>Unterdrückung und Korrektur negativer Narrative</li>
+        </ul>
+        <div class="sc-output">📄 Ergebnis: Optimierungs-Sprint-Pläne + monatliche Zitierfortschritts-Reports</div>
+      </div>
+      <div class="service-card sc-develop">
+        <div class="sc-label">Phase 3</div>
+        <h3>Entwickeln</h3>
+        <p class="sc-desc">Aufbau einer dauerhaften, langfristigen LLM-Autoritätsinfrastruktur — proprietäre Daten-Assets, Content-Ökosysteme und Monitoring-Systeme, die über Zeit und Plattformen hinweg an Wert gewinnen.</p>
+        <ul>
+          <li>Proprietärer Knowledge Hub (LLM-native Content-Bibliothek)</li>
+          <li>Laufendes KI-Monitoring-Dashboard (Zitierrate, Marken-Narrativ, SOV)</li>
+          <li>KI-Persona-Entwicklung für Führungskräfte und Personen des öffentlichen Lebens</li>
+          <li>Trainingsdaten-Strategie: Einbindung in zukünftige Modell-Trainingszyklen</li>
+          <li>Enterprise-RAG-Integrations-Beratung</li>
+          <li>KI-native PR-Strategie und Medienbeziehungs-Programm</li>
+          <li>Quartalsweise LLM-Landschafts-Reviews und Plattform-Updates</li>
+          <li>Wettbewerber-KI-Intelligence-Reports</li>
+        </ul>
+        <div class="sc-output">📄 Ergebnis: LLM-Autoritäts-Roadmap + kontinuierliches Monitoring-Retainer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">📋</span> Vollständiger Leistungskatalog — 18 Services</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Leistung</th><th>Phase</th><th>Was wir tun</th><th>Kundennutzen</th><th>Format</th><th>Frequenz</th><th>Priorität</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="bold">LLM-Sichtbarkeits-Audit</td><td>Analysieren</td><td>Systematisches Prompt-Testing auf 6+ KI-Plattformen; wörtliche Erfassung von Markenerwähnungen; Genauigkeits-Scoring</td><td>Wissen, was KI heute über Sie sagt</td><td>Report + Dashboard</td><td>Einmalig → quartalsweise</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">KI-Share-of-Voice-Analyse</td><td>Analysieren</td><td>Zitierfrequenz-Vergleich mit 3–5 Wettbewerbern über 50+ Ziel-Anfragen</td><td>Wettbewerbsposition in der KI-Suche verstehen</td><td>Wettbewerbs-Report</td><td>Monatlich</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">Entity-Architektur-Audit</td><td>Analysieren</td><td>Prüfung von Knowledge Graph, Wikidata, schema.org, Business-Listings auf Vollständigkeit und Konsistenz</td><td>Entity-Lücken identifizieren, die LLM-Erkennung verhindern</td><td>Technischer Report</td><td>Einmalig → halbjährlich</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">Content-Maschinenlesbarkeits-Audit</td><td>Analysieren</td><td>Bewertung bestehender Content-Seiten auf KI-Extrahierbarkeit: Struktur, Faktendichte, Entity-Klarheit, Schema-Nutzung</td><td>Priorisierung, welche Seiten neu strukturiert werden müssen</td><td>Seitenweise Scorecard</td><td>Einmalig → jährlich</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">Citation Source Map</td><td>Analysieren</td><td>Reverse-Engineering: welche spezifischen Quellen KI-Systeme über Ihre Marke nutzen</td><td>Wissen, wo investiert werden muss für maximalen Zitiereinfluss</td><td>Source-Map-Report</td><td>Quartalsweise</td><td><span class="tag tag-med">Hoch</span></td></tr>
+          <tr><td class="bold">Entity-Page-Erstellung</td><td>Optimieren</td><td>Umfassende, faktenreiche, schema-ausgezeichnete Seiten für Marke, Produkte, Kernaussagen und Personas</td><td>Primäre Quelle, die LLMs zitieren — grundlegendes Content-Asset</td><td>Webseiten + Schema</td><td>Einmalig → laufend</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">Strukturierte-Daten-Implementierung</td><td>Optimieren</td><td>Einsatz von schema.org-Markup (Organization, Product, Person, FAQPage, HowTo, Article) auf allen Schlüsselseiten</td><td>Maschinenlesbare Signale, die LLMs priorisieren</td><td>Technische Implementierung</td><td>Einmalig → gepflegt</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">Knowledge-Graph-Management</td><td>Optimieren</td><td>Google Knowledge Panel, Wikidata-Entity, Wikipedia-Präsenz beanspruchen, vervollständigen und kontinuierlich aktualisieren</td><td>LLMs gewichten Knowledge-Graph-Daten stark für Entity-Fakten</td><td>Laufendes Management</td><td>Monatlich</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">KI-optimierter FAQ/Q&A-Content</td><td>Optimieren</td><td>Frage-Antwort-formatierten Content erstellen, der auf exakte Prompts von KI-System-Nutzern abzielt</td><td>FAQ-Format ist der am häufigsten zitierte Content-Typ von LLMs</td><td>Content-Seiten</td><td>Laufend</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">Drittanbieter-Zitier-Programm</td><td>Optimieren</td><td>PR, Medienarbeit, Bewertungsplattform-Strategie zum Aufbau autoritativer Drittanbieter-Erwähnungen</td><td>LLMs triangulieren Aussagen — mehr unabhängige Quellen = mehr Zitierungen</td><td>PR-Retainer</td><td>Laufend</td><td><span class="tag tag-med">Hoch</span></td></tr>
+          <tr><td class="bold">Narrativ-Korrektur</td><td>Optimieren</td><td>Ungenaue oder negative KI-generierte Narrative identifizieren; Content- und Quellenstrategie zur Korrektur umsetzen</td><td>Verhindern, dass KI fehlerhafte Markeninformationen in großem Maßstab verbreitet</td><td>Korrektur-Sprint</td><td>Bei Bedarf</td><td><span class="tag tag-med">Hoch</span></td></tr>
+          <tr><td class="bold">Prompt-Ziel-Strategie</td><td>Optimieren</td><td>Alle hochwertigen Anfragen, bei denen die Marke in KI-Antworten erscheinen soll, kartieren; Content für jede erstellen</td><td>Präsenz bei jeder kritischen Entscheidungsanfrage sicherstellen</td><td>Strategie + Content-Plan</td><td>Quartalsweise Aktualisierung</td><td><span class="tag tag-med">Hoch</span></td></tr>
+          <tr><td class="bold">KI-Monitoring-Dashboard</td><td>Entwickeln</td><td>Maßgeschneidertes Dashboard zur Echtzeit-Verfolgung von Zitierrate, Narrativ-Genauigkeit und SOV auf allen großen KI-Plattformen</td><td>Laufende Sichtbarkeit auf LLM-Performance — keine blinden Flecken mehr</td><td>Live-Dashboard</td><td>Kontinuierlich</td><td><span class="tag tag-high">Kritisch</span></td></tr>
+          <tr><td class="bold">LLM-Autoritäts-Roadmap</td><td>Entwickeln</td><td>12-monatige strategische Roadmap mit priorisierten Maßnahmen, Meilensteinen und erwartetem Zitiergewinn-Verlauf</td><td>Klare Richtung — keine ad-hoc-Reparaturen</td><td>Strategiedokument</td><td>Jährlich</td><td><span class="tag tag-med">Hoch</span></td></tr>
+          <tr><td class="bold">KI-Persona-Entwicklung</td><td>Entwickeln</td><td>Umfassende, autoritative Entity-Profile für Führungskräfte, Gründer und Personen des öffentlichen Lebens auf allen KI-lesbaren Oberflächen aufbauen</td><td>Das KI-Narrativ über Ihre Schlüsselpersonen kontrollieren</td><td>Entity-Aufbau + Content</td><td>Einmalig → gepflegt</td><td><span class="tag tag-med">Hoch</span></td></tr>
+          <tr><td class="bold">Enterprise-RAG-Beratung</td><td>Entwickeln</td><td>Content- und Datenarchitektur für die Einbindung in Enterprise-RAG-Deployments optimieren</td><td>Die Quelle sein, aus der Enterprise-KI-Systeme schöpfen</td><td>Beratung + Implementierung</td><td>Projektbasiert</td><td><span class="tag tag-new">Aufkommend</span></td></tr>
+          <tr><td class="bold">Wettbewerber-KI-Intelligence</td><td>Entwickeln</td><td>Monatlicher Report über die Darstellung von Wettbewerbern in KI-Antworten und welche Strategien deren Zitier-Vorteil antreiben</td><td>Nie blind dafür sein, was Wettbewerber in der KI-Suche tun</td><td>Monatlicher Report</td><td>Monatlich</td><td><span class="tag tag-med">Hoch</span></td></tr>
+          <tr><td class="bold">Trainingsdaten-Strategie</td><td>Entwickeln</td><td>Beratung, wie Content über Common Crawl, Lizenzierung und Partnerschaften in zukünftigen LLM-Trainingsdatensätzen positioniert wird</td><td>Langfristige, sich kompensierende LLM-Autorität</td><td>Strategische Beratung</td><td>Laufend</td><td><span class="tag tag-new">Aufkommend</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a href="02-die-argumente.html">← Kapitel 02: Die 10 Argumente</a>
+    <a href="04-zielkunden.html">Kapitel 04: Zielkunden →</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo">ainomics<sup style="font-size:9px;font-weight:400;">®</sup> <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:2px;">visible results</span></div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Haftungsausschluss:</strong> LLM-Verhalten variiert je nach Plattform und ändert sich mit Modell-Updates. Stand Q1 2026.
+  </div>
+
+</div>
+</body>
+</html>
