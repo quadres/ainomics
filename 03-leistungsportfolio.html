@@ -28,19 +28,74 @@
   .section { margin-bottom:32px; }
   .section-title { font-size:17px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
   .icon { width:26px; height:26px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:white; font-size:13px; flex-shrink:0; background:var(--green); }
-  .service-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-bottom:24px; }
-  .service-card { border-radius:14px; padding:28px; color:white; position:relative; overflow:hidden; }
-  .service-card::after { content:''; position:absolute; right:-30px; bottom:-30px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.05); }
-  .sc-analyse  { background:linear-gradient(135deg,#1f3d4a,#2E7287); }
-  .sc-optimise { background:linear-gradient(135deg,#2E7287,#3d8fa5); }
-  .sc-develop  { background:linear-gradient(135deg,#1f5164,#5aacbf); }
-  .service-card .sc-label { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; opacity:0.6; margin-bottom:8px; }
-  .service-card h3 { font-size:22px; font-weight:900; margin-bottom:12px; }
-  .service-card .sc-desc { font-size:13px; opacity:0.75; margin-bottom:16px; line-height:1.65; }
-  .service-card ul { list-style:none; padding:0; }
-  .service-card ul li { font-size:13px; opacity:0.85; padding:4px 0; padding-left:18px; position:relative; }
-  .service-card ul li::before { content:'→'; position:absolute; left:0; opacity:0.5; }
-  .service-card .sc-output { margin-top:16px; padding:10px 14px; background:rgba(255,255,255,0.12); border-radius:8px; font-size:12px; font-weight:600; }
+  /* ── Phase Steps Indicator ── */
+  .phase-steps { display:flex; align-items:center; margin-bottom:28px; }
+  .ps-step { display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .ps-dot { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; letter-spacing:-0.5px; flex-shrink:0; }
+  .ps-dot-1 { background:#111827; color:#fff; box-shadow:0 4px 14px rgba(17,24,39,0.25); }
+  .ps-dot-2 { background:var(--brand); color:#fff; box-shadow:0 4px 14px rgba(46,114,135,0.3); }
+  .ps-dot-3 { background:#374151; color:#fff; box-shadow:0 4px 14px rgba(55,65,81,0.25); }
+  .ps-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); text-align:center; line-height:1.4; }
+  .ps-label strong { display:block; font-size:11px; color:var(--primary); }
+  .ps-line { flex:1; height:1px; background:linear-gradient(90deg,var(--border) 0%,var(--brand-lt) 50%,var(--border) 100%); margin:0 16px; margin-bottom:28px; }
+
+  /* ── Phase Cards — analytical uniform structure ── */
+  .pm-stack { display:flex; flex-direction:column; gap:12px; margin-bottom:24px; }
+  .pa-card { background:#fff; border-radius:14px; border:1px solid var(--border); overflow:hidden; }
+
+  /* Header */
+  .pa-head { display:flex; align-items:stretch; border-bottom:1px solid var(--border); }
+  .pa-accent { width:6px; flex-shrink:0; }
+  .pa-accent-1 { background:#111827; }
+  .pa-accent-2 { background:var(--brand); }
+  .pa-accent-3 { background:#374151; }
+  .pa-head-main { flex:1; display:flex; align-items:center; gap:16px; padding:16px 20px; }
+  .pa-phase-num { font-size:11px; font-weight:900; letter-spacing:2px; text-transform:uppercase; padding:5px 12px; border-radius:6px; color:#fff; flex-shrink:0; }
+  .pa-num-1 { background:#111827; }
+  .pa-num-2 { background:var(--brand); }
+  .pa-num-3 { background:#374151; }
+  .pa-head-title { font-size:17px; font-weight:900; color:var(--primary); }
+  .pa-head-tag { font-size:10px; font-weight:600; color:var(--muted); margin-top:1px; }
+  .pa-head-badges { margin-left:auto; display:flex; gap:8px; align-items:center; padding-right:4px; flex-shrink:0; }
+  .pa-badge { font-size:10px; font-weight:700; padding:4px 10px; border-radius:6px; background:var(--bg); color:var(--muted); border:1px solid var(--border); white-space:nowrap; }
+
+  /* Body: description left + services right */
+  .pa-body { display:grid; grid-template-columns:260px 1fr; }
+  .pa-desc { padding:20px 24px; border-right:1px solid var(--border); display:flex; flex-direction:column; gap:12px; }
+  .pa-desc p { font-size:12.5px; color:var(--muted); line-height:1.75; }
+  .pa-focus { display:flex; flex-direction:column; gap:4px; margin-top:auto; }
+  .pa-focus-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); }
+  .pa-focus-val { font-size:11px; font-weight:700; color:var(--text); }
+
+  /* Services grid */
+  .pa-svcs { padding:20px 24px; display:grid; grid-template-columns:1fr 1fr; gap:0; }
+  .pa-svc { display:flex; align-items:baseline; gap:10px; padding:9px 0; border-bottom:1px solid #f0f4f6; }
+  .pa-svc:nth-last-child(-n+2) { border-bottom:none; }
+  .pa-svc-n { font-size:10px; font-weight:900; color:var(--border); flex-shrink:0; width:20px; font-variant-numeric:tabular-nums; }
+  .pa-svc-n-1 { color:#c5cdd6; }
+  .pa-svc-n-2 { color:#a8cdd8; }
+  .pa-svc-n-3 { color:#b0bec5; }
+  .pa-svc-text { font-size:12px; color:var(--text); line-height:1.45; }
+
+  /* Footer / deliverable */
+  .pa-foot { display:flex; align-items:center; gap:10px; padding:11px 20px 11px 26px; border-top:1px solid var(--border); background:#f8fbfc; }
+  .pa-foot-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); flex-shrink:0; }
+  .pa-foot-sep { width:1px; height:14px; background:var(--border); flex-shrink:0; }
+  .pa-foot-text { font-size:12px; font-weight:600; color:var(--text); }
+
+  @media (max-width:860px) {
+    .pa-body { grid-template-columns:1fr; }
+    .pa-desc { border-right:none; border-bottom:1px solid var(--border); }
+    .pa-focus { margin-top:0; }
+    .ps-line { margin:0 8px; margin-bottom:28px; }
+  }
+  @media (max-width:580px) {
+    .pa-svcs { grid-template-columns:1fr; }
+    .pa-svc:last-child { border-bottom:none; }
+    .phase-steps { flex-wrap:wrap; gap:12px; justify-content:center; }
+    .ps-line { display:none; }
+    .pa-head-badges { display:none; }
+  }
   .table-wrap { overflow-x:auto; border-radius:10px; border:1px solid var(--border); background:var(--surface); margin-bottom:16px; }
   table { width:100%; border-collapse:collapse; }
   thead th { background:var(--brand); color:white; font-size:11px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; padding:11px 14px; text-align:left; white-space:nowrap; }
@@ -90,55 +145,153 @@
 
   <div class="section">
     <div class="section-title"><span class="icon">🛠️</span> Dreiphasiges Leistungsmodell</div>
-    <div class="service-grid">
-      <div class="service-card sc-analyse">
-        <div class="sc-label">Phase 1</div>
-        <h3>Analysieren</h3>
-        <p class="sc-desc">Vollständige Diagnose, wie Ihre Marke, Ihr Produkt oder Ihre Persönlichkeit derzeit auf allen großen KI-Systemen erscheint — Lücken, Ungenauigkeiten, Wettbewerbsvorteile und Optimierungspotenziale werden identifiziert.</p>
-        <ul>
-          <li>LLM-Sichtbarkeits-Audit (ChatGPT, Perplexity, Claude, Gemini, Copilot)</li>
-          <li>Entity-Profil-Bewertung (Knowledge Graph, Wikidata, strukturierte Daten)</li>
-          <li>KI-Share-of-Voice vs. Wettbewerber</li>
-          <li>Content-Maschinenlesbarkeits-Score</li>
-          <li>Citation Source Map — welche Quellen LLMs über Sie nutzen</li>
-          <li>Reputations-Narrativ-Audit — was die KI wörtlich über Sie sagt</li>
-          <li>RAG-Readiness-Bewertung für Enterprise/B2B-Kontexte</li>
-          <li>Keyword-zu-Prompt-Migrations-Analyse</li>
-        </ul>
-        <div class="sc-output">📄 Ergebnis: LLM-Sichtbarkeits-Baseline-Report + Prioritäts-Aktionsmatrix</div>
+
+    <!-- Phase Progress Indicator -->
+    <div class="phase-steps">
+      <div class="ps-step">
+        <div class="ps-dot ps-dot-1">01</div>
+        <div class="ps-label"><strong>Analysieren</strong>Diagnose &amp; Baseline</div>
       </div>
-      <div class="service-card sc-optimise">
-        <div class="sc-label">Phase 2</div>
-        <h3>Optimieren</h3>
-        <p class="sc-desc">Systematische Umsetzung von Optimierungen über Inhalte, Struktur, Entity-Daten und Drittanbieter-Präsenz, um Zitierfrequenz und -genauigkeit auf allen KI-Plattformen zu maximieren.</p>
-        <ul>
-          <li>Entity-Architektur-Aufbau (schema.org, strukturiertes Daten-Markup)</li>
-          <li>KI-optimierte Content-Erstellung (Entity Pages, FAQ-Cluster, Fact Sheets)</li>
-          <li>Knowledge-Graph / Wikipedia / Wikidata-Management</li>
-          <li>Prompt Engineering: Identifikation hochpriorisierter Anfragen</li>
-          <li>Drittanbieter-Zitiergeschwindigkeits-Programm (PR, Medien, Bewertungsplattformen)</li>
-          <li>Technisch: Crawlbarkeit, API-Zugänglichkeit, robots.txt-Review</li>
-          <li>Plattformübergreifende Konsistenz-Ausrichtung</li>
-          <li>Unterdrückung und Korrektur negativer Narrative</li>
-        </ul>
-        <div class="sc-output">📄 Ergebnis: Optimierungs-Sprint-Pläne + monatliche Zitierfortschritts-Reports</div>
+      <div class="ps-line"></div>
+      <div class="ps-step">
+        <div class="ps-dot ps-dot-2">02</div>
+        <div class="ps-label"><strong>Optimieren</strong>Aufbau &amp; Umsetzung</div>
       </div>
-      <div class="service-card sc-develop">
-        <div class="sc-label">Phase 3</div>
-        <h3>Entwickeln</h3>
-        <p class="sc-desc">Aufbau einer dauerhaften, langfristigen LLM-Autoritätsinfrastruktur — proprietäre Daten-Assets, Content-Ökosysteme und Monitoring-Systeme, die über Zeit und Plattformen hinweg an Wert gewinnen.</p>
-        <ul>
-          <li>Proprietärer Knowledge Hub (LLM-native Content-Bibliothek)</li>
-          <li>Laufendes KI-Monitoring-Dashboard (Zitierrate, Marken-Narrativ, SOV)</li>
-          <li>KI-Persona-Entwicklung für Führungskräfte und Personen des öffentlichen Lebens</li>
-          <li>Trainingsdaten-Strategie: Einbindung in zukünftige Modell-Trainingszyklen</li>
-          <li>Enterprise-RAG-Integrations-Beratung</li>
-          <li>KI-native PR-Strategie und Medienbeziehungs-Programm</li>
-          <li>Quartalsweise LLM-Landschafts-Reviews und Plattform-Updates</li>
-          <li>Wettbewerber-KI-Intelligence-Reports</li>
-        </ul>
-        <div class="sc-output">📄 Ergebnis: LLM-Autoritäts-Roadmap + kontinuierliches Monitoring-Retainer</div>
+      <div class="ps-line"></div>
+      <div class="ps-step">
+        <div class="ps-dot ps-dot-3">03</div>
+        <div class="ps-label"><strong>Entwickeln</strong>Infrastruktur &amp; Skala</div>
       </div>
+    </div>
+
+    <div class="pm-stack">
+
+      <!-- ── Phase 01: Analysieren ── -->
+      <div class="pa-card">
+        <div class="pa-head">
+          <div class="pa-accent pa-accent-1"></div>
+          <div class="pa-head-main">
+            <span class="pa-phase-num pa-num-1">Phase 01</span>
+            <div>
+              <div class="pa-head-title">Analysieren</div>
+              <div class="pa-head-tag">Diagnose · Baseline · Wettbewerbsvergleich</div>
+            </div>
+            <div class="pa-head-badges">
+              <span class="pa-badge">8 Leistungen</span>
+              <span class="pa-badge">Einmalig → quartalsweise</span>
+            </div>
+          </div>
+        </div>
+        <div class="pa-body">
+          <div class="pa-desc">
+            <p>Vollständige Diagnose der aktuellen KI-Sichtbarkeit — Lücken, Ungenauigkeiten, Wettbewerbsposition und Optimierungspotenziale werden systematisch identifiziert.</p>
+            <div class="pa-focus">
+              <div class="pa-focus-label">Ergebnis-Format</div>
+              <div class="pa-focus-val">Report + Prioritäts-Aktionsmatrix</div>
+            </div>
+          </div>
+          <div class="pa-svcs">
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">01</span><span class="pa-svc-text">LLM-Sichtbarkeits-Audit (ChatGPT, Perplexity, Claude, Gemini, Copilot)</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">02</span><span class="pa-svc-text">Entity-Profil-Bewertung (Knowledge Graph, Wikidata, strukturierte Daten)</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">03</span><span class="pa-svc-text">KI-Share-of-Voice vs. Wettbewerber</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">04</span><span class="pa-svc-text">Content-Maschinenlesbarkeits-Score</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">05</span><span class="pa-svc-text">Citation Source Map — welche Quellen LLMs über Sie nutzen</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">06</span><span class="pa-svc-text">Reputations-Narrativ-Audit — was die KI wörtlich über Sie sagt</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">07</span><span class="pa-svc-text">RAG-Readiness-Bewertung für Enterprise/B2B-Kontexte</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-1">08</span><span class="pa-svc-text">Keyword-zu-Prompt-Migrations-Analyse</span></div>
+          </div>
+        </div>
+        <div class="pa-foot">
+          <span class="pa-foot-label">Deliverable</span>
+          <span class="pa-foot-sep"></span>
+          <span class="pa-foot-text">LLM-Sichtbarkeits-Baseline-Report + Prioritäts-Aktionsmatrix</span>
+        </div>
+      </div>
+
+      <!-- ── Phase 02: Optimieren ── -->
+      <div class="pa-card">
+        <div class="pa-head">
+          <div class="pa-accent pa-accent-2"></div>
+          <div class="pa-head-main">
+            <span class="pa-phase-num pa-num-2">Phase 02</span>
+            <div>
+              <div class="pa-head-title">Optimieren</div>
+              <div class="pa-head-tag">Inhalte · Struktur · Entity-Daten · Drittquellen</div>
+            </div>
+            <div class="pa-head-badges">
+              <span class="pa-badge">8 Leistungen</span>
+              <span class="pa-badge">Laufend · Sprint-basiert</span>
+            </div>
+          </div>
+        </div>
+        <div class="pa-body">
+          <div class="pa-desc">
+            <p>Systematische Umsetzung über Inhalte, Struktur, Entity-Daten und Drittanbieter-Präsenz, um Zitierfrequenz und -genauigkeit auf allen KI-Plattformen zu maximieren.</p>
+            <div class="pa-focus">
+              <div class="pa-focus-label">Ergebnis-Format</div>
+              <div class="pa-focus-val">Sprint-Pläne + monatliche Fortschritts-Reports</div>
+            </div>
+          </div>
+          <div class="pa-svcs">
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">01</span><span class="pa-svc-text">Entity-Architektur-Aufbau (schema.org, strukturiertes Daten-Markup)</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">02</span><span class="pa-svc-text">KI-optimierte Content-Erstellung (Entity Pages, FAQ-Cluster, Fact Sheets)</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">03</span><span class="pa-svc-text">Knowledge-Graph / Wikipedia / Wikidata-Management</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">04</span><span class="pa-svc-text">Prompt Engineering: Identifikation hochpriorisierter Anfragen</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">05</span><span class="pa-svc-text">Drittanbieter-Zitiergeschwindigkeits-Programm (PR, Medien, Bewertungsplattformen)</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">06</span><span class="pa-svc-text">Technisch: Crawlbarkeit, API-Zugänglichkeit, robots.txt-Review</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">07</span><span class="pa-svc-text">Plattformübergreifende Konsistenz-Ausrichtung</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-2">08</span><span class="pa-svc-text">Unterdrückung und Korrektur negativer Narrative</span></div>
+          </div>
+        </div>
+        <div class="pa-foot">
+          <span class="pa-foot-label">Deliverable</span>
+          <span class="pa-foot-sep"></span>
+          <span class="pa-foot-text">Optimierungs-Sprint-Pläne + monatliche Zitierfortschritts-Reports</span>
+        </div>
+      </div>
+
+      <!-- ── Phase 03: Entwickeln ── -->
+      <div class="pa-card">
+        <div class="pa-head">
+          <div class="pa-accent pa-accent-3"></div>
+          <div class="pa-head-main">
+            <span class="pa-phase-num pa-num-3">Phase 03</span>
+            <div>
+              <div class="pa-head-title">Entwickeln</div>
+              <div class="pa-head-tag">Infrastruktur · Monitoring · Langzeit-Autorität</div>
+            </div>
+            <div class="pa-head-badges">
+              <span class="pa-badge">8 Leistungen</span>
+              <span class="pa-badge">Retainer · kontinuierlich</span>
+            </div>
+          </div>
+        </div>
+        <div class="pa-body">
+          <div class="pa-desc">
+            <p>Aufbau einer dauerhaften LLM-Autoritätsinfrastruktur — proprietäre Daten-Assets, Content-Ökosysteme und Monitoring-Systeme, die über Zeit und Plattformen an Wert gewinnen.</p>
+            <div class="pa-focus">
+              <div class="pa-focus-label">Ergebnis-Format</div>
+              <div class="pa-focus-val">LLM-Autoritäts-Roadmap + Monitoring-Retainer</div>
+            </div>
+          </div>
+          <div class="pa-svcs">
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">01</span><span class="pa-svc-text">Proprietärer Knowledge Hub (LLM-native Content-Bibliothek)</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">02</span><span class="pa-svc-text">Laufendes KI-Monitoring-Dashboard (Zitierrate, Marken-Narrativ, SOV)</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">03</span><span class="pa-svc-text">KI-Persona-Entwicklung für Führungskräfte &amp; Personen des öffentlichen Lebens</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">04</span><span class="pa-svc-text">Trainingsdaten-Strategie: Einbindung in zukünftige Modell-Trainingszyklen</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">05</span><span class="pa-svc-text">Enterprise-RAG-Integrations-Beratung</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">06</span><span class="pa-svc-text">KI-native PR-Strategie und Medienbeziehungs-Programm</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">07</span><span class="pa-svc-text">Quartalsweise LLM-Landschafts-Reviews und Plattform-Updates</span></div>
+            <div class="pa-svc"><span class="pa-svc-n pa-svc-n-3">08</span><span class="pa-svc-text">Wettbewerber-KI-Intelligence-Reports</span></div>
+          </div>
+        </div>
+        <div class="pa-foot">
+          <span class="pa-foot-label">Deliverable</span>
+          <span class="pa-foot-sep"></span>
+          <span class="pa-foot-text">LLM-Autoritäts-Roadmap + kontinuierliches Monitoring-Retainer</span>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -170,6 +323,18 @@
           <tr><td class="bold">Trainingsdaten-Strategie</td><td>Entwickeln</td><td>Beratung, wie Content über Common Crawl, Lizenzierung und Partnerschaften in zukünftigen LLM-Trainingsdatensätzen positioniert wird</td><td>Langfristige, sich kompensierende LLM-Autorität</td><td>Strategische Beratung</td><td>Laufend</td><td><span class="tag tag-new">Aufkommend</span></td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1f3d4a,#2E7287);border-radius:12px;padding:20px 28px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.5);margin-bottom:4px;">Vertiefung</div>
+      <div style="font-size:15px;font-weight:800;color:#fff;">🔧 Umsetzungsguide: Schritt-für-Schritt &amp; Service-Levels</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;">Für jeden der 18 Services: konkrete Umsetzungsschritte + Essential / Professional / Enterprise</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="03b-umsetzungsguide.html" style="font-size:12px;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;background:white;color:#1f5164;white-space:nowrap;">Umsetzungsguide →</a>
+      <a href="03c-tools.html" style="font-size:12px;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);white-space:nowrap;">Tools &amp; Software →</a>
     </div>
   </div>
 

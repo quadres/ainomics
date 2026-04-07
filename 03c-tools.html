@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools & Software | ainomics LLM-Suchoptimierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5; --primary:#1f3d4a; --bg:#eef3f5; --surface:#fff; --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585; --green:#1a9e6e; --red:#c0392b; --amber:#b87a00; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); flex-wrap:wrap; }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .page-header { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:40px 44px; margin-bottom:28px; color:white; position:relative; overflow:hidden; }
+  .page-header::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:radial-gradient(circle,rgba(93,188,210,0.15) 0%,transparent 70%); }
+  .page-header .ph-num { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+  .page-header h1 { font-size:32px; font-weight:900; line-height:1.15; margin-bottom:10px; }
+  .page-header p { font-size:15px; color:rgba(255,255,255,0.65); max-width:640px; line-height:1.65; }
+
+  /* Tool legend */
+  .legend { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .leg-item { display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:5px 12px; border-radius:8px; }
+  .leg-free    { background:#d1fae5; color:#065f46; }
+  .leg-freemium{ background:#fef3c7; color:#92400e; }
+  .leg-paid    { background:#fee2e2; color:#991b1b; }
+  .leg-manual  { background:#e5e7eb; color:#374151; }
+
+  /* Tool directory */
+  .tool-dir { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-bottom:32px; }
+  .tool-chip { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
+  .tool-chip-name { font-size:13px; font-weight:800; color:var(--primary); }
+  .tool-chip-desc { font-size:11px; color:var(--muted); line-height:1.4; }
+  .tool-chip-badge { margin-top:4px; }
+
+  /* Phase blocks */
+  .phase-block { margin-bottom:36px; }
+  .phase-label { display:flex; align-items:center; gap:14px; margin-bottom:18px; padding:14px 20px; border-radius:12px; color:white; }
+  .phase-1 { background:linear-gradient(135deg,#1f3d4a,#2E7287); }
+  .phase-2 { background:linear-gradient(135deg,#2E7287,#3d8fa5); }
+  .phase-3 { background:linear-gradient(135deg,#1f5164,#5aacbf); }
+  .phase-label .ph-icon { font-size:22px; }
+  .phase-label .ph-title { font-size:16px; font-weight:900; }
+  .phase-label .ph-sub { font-size:11px; font-weight:500; opacity:0.7; margin-top:1px; }
+
+  /* Service rows */
+  .svc-row { background:var(--surface); border-radius:12px; border:1px solid var(--border); margin-bottom:12px; overflow:hidden; }
+  .svc-row-head { padding:16px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); background:#f8fbfc; }
+  .svc-row-num { font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--muted); width:24px; flex-shrink:0; }
+  .svc-row-name { font-size:14px; font-weight:800; color:var(--primary); flex:1; }
+  .svc-row-body { padding:16px 20px; display:flex; flex-direction:column; gap:12px; }
+
+  /* Tool groups within service */
+  .tool-group { display:flex; flex-direction:column; gap:6px; }
+  .tg-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:2px; }
+  .tool-list { display:flex; flex-wrap:wrap; gap:8px; }
+
+  /* Tool pill */
+  .tool-pill { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid; }
+  .tp-free     { background:#d1fae5; color:#065f46; border-color:#6ee7b7; }
+  .tp-freemium { background:#fef3c7; color:#92400e; border-color:#fcd34d; }
+  .tp-paid     { background:#fee2e2; color:#991b1b; border-color:#fca5a5; }
+  .tp-manual   { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+  .tp-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .tp-free .tp-dot     { background:#065f46; }
+  .tp-freemium .tp-dot { background:#92400e; }
+  .tp-paid .tp-dot     { background:#991b1b; }
+  .tp-manual .tp-dot   { background:#6b7280; }
+
+  /* Tool note */
+  .tool-note { font-size:11.5px; color:var(--muted); font-style:italic; padding:7px 12px; background:#eef3f5; border-radius:6px; border-left:3px solid var(--brand); }
+
+  /* Highlight tools */
+  .star-tools { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-bottom:32px; }
+  .star-card { background:var(--surface); border-radius:14px; border:1px solid var(--border); padding:20px; position:relative; overflow:hidden; }
+  .star-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .sc-geo::before  { background:var(--brand); }
+  .sc-entity::before { background:var(--green); }
+  .sc-schema::before { background:var(--brand-lt); }
+  .sc-pr::before { background:var(--amber); }
+  .star-card-icon { font-size:28px; margin-bottom:10px; }
+  .star-card-name { font-size:15px; font-weight:800; color:var(--primary); margin-bottom:4px; }
+  .star-card-cat { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:10px; }
+  .star-card-desc { font-size:12.5px; color:var(--muted); line-height:1.6; margin-bottom:12px; }
+  .star-card-services { display:flex; flex-wrap:wrap; gap:5px; }
+  .sc-service-tag { font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:#eef3f5; color:var(--brand-dk); }
+
+  .section-title { font-size:17px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .page-nav { display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); }
+  .page-nav a { font-size:12px; font-weight:700; color:var(--brand); text-decoration:none; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+  .page-nav a:hover { background:#e4f0f4; }
+  .footer { background:var(--brand-dk); color:rgba(255,255,255,0.5); border-radius:12px; padding:20px 28px; font-size:12px; line-height:1.8; margin-top:32px; }
+  .footer strong { color:rgba(255,255,255,0.8); } .footer a { color:rgba(255,255,255,0.35); text-decoration:none; }
+  .footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size:16px; font-weight:800; color:#fff; }
+  @media (max-width:700px) { .page-header { padding:28px 24px; } .page-header h1 { font-size:24px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <a class="nav-back" href="03-leistungsportfolio.html">← Leistungsportfolio</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a>
+    <span>›</span>
+    <a href="03-leistungsportfolio.html">Kapitel 03 — Leistungsportfolio</a>
+    <span>›</span>
+    <span>Tools &amp; Software</span>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-num">Kapitel 03 — Anhang</div>
+    <h1>🧰 Tools &amp; Software</h1>
+    <p>Welche Tools für welchen Service — von spezialisierten GEO-Plattformen bis zu Schema-Generatoren, PR-Tools und Monitoring-Dashboards.</p>
+  </div>
+
+  <!-- LEGENDE -->
+  <div class="legend">
+    <div class="leg-item leg-free">● Kostenlos</div>
+    <div class="leg-item leg-freemium">● Freemium</div>
+    <div class="leg-item leg-paid">● Kostenpflichtig</div>
+    <div class="leg-item leg-manual">● Manuell / Eigenentwicklung</div>
+  </div>
+
+  <!-- TOP TOOLS SPOTLIGHT -->
+  <div class="section-title">🌟 Schlüssel-Tools im Überblick</div>
+  <div class="star-tools">
+
+    <div class="star-card sc-geo">
+      <div class="star-card-icon">🔭</div>
+      <div class="star-card-name">Profound (früher Peec.ai)</div>
+      <div class="star-card-cat">GEO Monitoring · kostenpflichtig</div>
+      <div class="star-card-desc">Führende Plattform für LLM-Sichtbarkeits-Tracking. Automatisiertes Prompt-Testing auf ChatGPT, Perplexity, Gemini u.a. — inkl. SOV, Zitierrate und Wettbewerber-Vergleich.</div>
+      <div class="star-card-services">
+        <span class="sc-service-tag">S1 Sichtbarkeits-Audit</span>
+        <span class="sc-service-tag">S2 SOV-Analyse</span>
+        <span class="sc-service-tag">S13 Monitoring</span>
+        <span class="sc-service-tag">S17 Wettbewerber</span>
+      </div>
+    </div>
+
+    <div class="star-card sc-geo">
+      <div class="star-card-icon">👁️</div>
+      <div class="star-card-name">Otterly.ai</div>
+      <div class="star-card-cat">GEO Monitoring · Freemium</div>
+      <div class="star-card-desc">Spezialisiertes LLM-Monitoring-Tool — verfolgt Markenerwähnungen über AI-Suchplattformen, Sentiment-Analyse und Konkurrenz-Vergleich. Günstigerer Einstieg als Profound.</div>
+      <div class="star-card-services">
+        <span class="sc-service-tag">S1 Sichtbarkeits-Audit</span>
+        <span class="sc-service-tag">S2 SOV-Analyse</span>
+        <span class="sc-service-tag">S11 Narrativ-Korrektur</span>
+        <span class="sc-service-tag">S13 Monitoring</span>
+      </div>
+    </div>
+
+    <div class="star-card sc-entity">
+      <div class="star-card-icon">🌐</div>
+      <div class="star-card-name">Wikidata + Google KP</div>
+      <div class="star-card-cat">Entity-Management · kostenlos</div>
+      <div class="star-card-desc">Das Fundament jeder Entity-Strategie: Wikidata als strukturierte Wissensdatenbank, die direkt von LLMs genutzt wird — kombiniert mit dem Google Knowledge Panel als primärem Vertrauenssignal.</div>
+      <div class="star-card-services">
+        <span class="sc-service-tag">S3 Entity-Audit</span>
+        <span class="sc-service-tag">S8 Knowledge Graph</span>
+        <span class="sc-service-tag">S15 KI-Persona</span>
+      </div>
+    </div>
+
+    <div class="star-card sc-schema">
+      <div class="star-card-icon">🏷️</div>
+      <div class="star-card-name">Google Rich Results Test</div>
+      <div class="star-card-cat">Schema-Validierung · kostenlos</div>
+      <div class="star-card-desc">Unverzichtbar für Schema-Validierung: prüft JSON-LD-Markup auf Korrektheit, zeigt unterstützte Rich-Result-Typen und gibt Fehler-Feedback in Echtzeit.</div>
+      <div class="star-card-services">
+        <span class="sc-service-tag">S4 Content-Audit</span>
+        <span class="sc-service-tag">S7 Strukturierte Daten</span>
+        <span class="sc-service-tag">S9 FAQ-Content</span>
+      </div>
+    </div>
+
+    <div class="star-card sc-pr">
+      <div class="star-card-icon">📰</div>
+      <div class="star-card-name">Connectively (ex-HARO)</div>
+      <div class="star-card-cat">PR / Earned Media · Freemium</div>
+      <div class="star-card-desc">Verbindet Experten mit Journalisten für Medienerwähnungen — autoritative Drittquellen, die LLMs stark gewichten. Schnellster Weg zu hochwertigen redaktionellen Zitierquellen.</div>
+      <div class="star-card-services">
+        <span class="sc-service-tag">S5 Citation Map</span>
+        <span class="sc-service-tag">S10 Drittanbieter-PR</span>
+        <span class="sc-service-tag">S15 KI-Persona</span>
+      </div>
+    </div>
+
+    <div class="star-card sc-schema">
+      <div class="star-card-icon">🕷️</div>
+      <div class="star-card-name">Screaming Frog SEO Spider</div>
+      <div class="star-card-cat">Technisches Audit · Freemium</div>
+      <div class="star-card-desc">Crawlt die gesamte Website und extrahiert Schema-Markup, Metadaten, robots.txt-Regeln und Crawlbarkeits-Probleme — Basis für technische RAG-Readiness- und Content-Audits.</div>
+      <div class="star-card-services">
+        <span class="sc-service-tag">S4 Content-Audit</span>
+        <span class="sc-service-tag">S7 Strukturierte Daten</span>
+        <span class="sc-service-tag">S16 RAG-Beratung</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ PHASE 1 ═══ -->
+  <div class="phase-block">
+    <div class="phase-label phase-1">
+      <span class="ph-icon">🔍</span>
+      <div>
+        <div class="ph-title">Phase 1 — Analysieren</div>
+        <div class="ph-sub">Tools für Diagnose, Audit und Baseline-Messung</div>
+      </div>
+    </div>
+
+    <!-- S1 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">01</span>
+        <span class="svc-row-name">LLM-Sichtbarkeits-Audit</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Spezialisierte GEO-Monitoring-Plattformen</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Otterly.ai</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>BrightEdge Generative Parser</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Semrush AI Toolkit</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Search Atlas (OTTO AI)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Manuelles Testing (direkte KI-Plattformen)</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>ChatGPT (OpenAI)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Perplexity AI</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Claude (Anthropic)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Google Gemini</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Microsoft Copilot</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Grok (xAI)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Dokumentation &amp; Auswertung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Sheets</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Notion</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Airtable</span>
+          </div>
+        </div>
+        <div class="tool-note">Profound und Otterly.ai automatisieren das Prompt-Testing erheblich — manuelles Testing ist für kleine Prompt-Sets mit Google Sheets effizient.</div>
+      </div>
+    </div>
+
+    <!-- S2 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">02</span>
+        <span class="svc-row-name">KI-Share-of-Voice-Analyse</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">SOV-Tracking-Plattformen</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Otterly.ai</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Semrush AI Toolkit</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Authoritas</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Manuelle Berechnung &amp; Visualisierung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Sheets (SOV-Formel)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Looker Studio</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Notion Dashboard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">03</span>
+        <span class="svc-row-name">Entity-Architektur-Audit</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Knowledge Graph &amp; Entity-Prüfung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Knowledge Panel</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikidata Query Service</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Knowledge Graph API</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>schema.org Validator</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Schema-Markup-Analyse</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Rich Results Test</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Screaming Frog SEO Spider</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Chrome Extension: Detailed SEO</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Business Listings &amp; NAP-Konsistenz</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Moz Local</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>BrightLocal</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Yext</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">04</span>
+        <span class="svc-row-name">Content-Maschinenlesbarkeits-Audit</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Site-Crawling &amp; Inhaltsanalyse</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Screaming Frog SEO Spider</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Sitebulb</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Search Console</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Schema-Validierung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Rich Results Test</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Schema Markup Validator</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Lesbarkeits- &amp; Struktur-Analyse</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Hemingway Editor</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Clearscope</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>BrightEdge Generative Parser</span>
+          </div>
+        </div>
+        <div class="tool-note">Screaming Frog extrahiert Schema-Daten und Seitenstruktur im Bulk — ideal für große Websites. Für Einzelseiten reicht der Rich Results Test.</div>
+      </div>
+    </div>
+
+    <!-- S5 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">05</span>
+        <span class="svc-row-name">Citation Source Map</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Quellen-transparente KI-Plattformen</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Perplexity AI (Quellen sichtbar)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Microsoft Copilot (Quellen sichtbar)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Google AI Overviews (teils)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Automated Source Tracking</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound (Citation Tracking)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Otterly.ai</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Backlink- &amp; Quellen-Analyse</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Ahrefs</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Semrush Backlink Audit</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Search Console (Links)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /phase 1 -->
+
+  <!-- ═══ PHASE 2 ═══ -->
+  <div class="phase-block">
+    <div class="phase-label phase-2">
+      <span class="ph-icon">⚙️</span>
+      <div>
+        <div class="ph-title">Phase 2 — Optimieren</div>
+        <div class="ph-sub">Tools für Content-Erstellung, Schema, Knowledge Graph und PR</div>
+      </div>
+    </div>
+
+    <!-- S6 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">06</span>
+        <span class="svc-row-name">Entity-Page-Erstellung</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">KI-gestützte Content-Erstellung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Claude (Anthropic)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>ChatGPT</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Jasper AI</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Clearscope</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Schema-Generierung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Merkle Schema Generator</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Structured Data Markup Helper</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Hall Analysis JSON-LD Generator</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">CMS-Integration</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Yoast SEO (WordPress)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>RankMath (WordPress)</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Webflow CMS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S7 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">07</span>
+        <span class="svc-row-name">Strukturierte-Daten-Implementierung</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Schema-Code-Generatoren</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Merkle Schema Generator</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Structured Data Markup Helper</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Hall Analysis JSON-LD Generator</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Schema.dev</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Validierung &amp; Testing</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Rich Results Test</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Schema Markup Validator (W3C)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Search Console (Rich Results)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">WordPress-Plugins</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Yoast SEO</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>RankMath</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Schema Pro</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>WP Schema</span>
+          </div>
+        </div>
+        <div class="tool-note">JSON-LD ist gegenüber Microdata und RDFa klar zu bevorzugen — LLMs und Google-Crawler verarbeiten JSON-LD zuverlässiger.</div>
+      </div>
+    </div>
+
+    <!-- S8 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">08</span>
+        <span class="svc-row-name">Knowledge-Graph-Management</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Kern-Plattformen</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Knowledge Panel (Claim)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikidata.org</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikipedia</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Business Profile</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Wikidata-Tools</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>OpenRefine + Wikidata Extension</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>QuickStatements (Bulk-Edits)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikidata Query Service (SPARQL)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Managed Listing Services</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Yext</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>BrightLocal</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Moz Local</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S9 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">09</span>
+        <span class="svc-row-name">KI-optimierter FAQ/Q&amp;A-Content</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Fragen-Recherche</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>AlsoAsked</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>AnswerThePublic</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Semrush (Fragen-Filter)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google „People also ask"</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Ahrefs Q&amp;A-Report</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Prompt-basierte Fragen-Extraktion</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Perplexity AI (Related Questions)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>ChatGPT (Prompt-Mining)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Schema &amp; Implementierung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Rich Results Test (FAQPage)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Yoast SEO (FAQ-Block)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S10 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">10</span>
+        <span class="svc-row-name">Drittanbieter-Zitier-Programm</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Earned Media / PR-Tools</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Connectively (ex-HARO)</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Prowly</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Cision</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Meltwater</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Qwoted</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Bewertungsplattformen</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Trustpilot</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>G2</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Capterra</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Google Reviews</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>kununu (DACH)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Medien-Monitoring</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Google Alerts</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Mention.com</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Ahrefs (Mention-Tracking)</span>
+          </div>
+        </div>
+        <div class="tool-note">Connectively (HARO-Nachfolger) ist besonders wertvoll: ein platzierter Expertenkommentar in einem Qualitätsmedium erzeugt exakt die Art autoritativer Drittquelle, die LLMs bevorzugt zitieren.</div>
+      </div>
+    </div>
+
+    <!-- S11 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">11</span>
+        <span class="svc-row-name">Narrativ-Korrektur</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Narrativ-Erkennung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Otterly.ai (Sentiment-Tracking)</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound (Narrativ-Analyse)</span>
+            <span class="tool-pill tp-manual"><span class="tp-dot"></span>Manuelles Prompt-Testing</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Content-Korrekturen</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Knowledge Panel (Feedback)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikidata (Korrekturen)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikipedia (Korrekturen)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Reputations-Management</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Reputationdefender</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Mention.com</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Brand24</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S12 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">12</span>
+        <span class="svc-row-name">Prompt-Ziel-Strategie</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Prompt-Recherche &amp; Intent-Analyse</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>AlsoAsked</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>AnswerThePublic</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Semrush Keyword Magic Tool</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Ahrefs Keywords Explorer</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">KI-native Prompt-Mapping</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Perplexity (Related Searches)</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound (Prompt Intelligence)</span>
+            <span class="tool-pill tp-manual"><span class="tp-dot"></span>Eigene Prompt-Bibliothek</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Strategische Planung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Notion</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Airtable</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Sheets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /phase 2 -->
+
+  <!-- ═══ PHASE 3 ═══ -->
+  <div class="phase-block">
+    <div class="phase-label phase-3">
+      <span class="ph-icon">🚀</span>
+      <div>
+        <div class="ph-title">Phase 3 — Entwickeln</div>
+        <div class="ph-sub">Tools für Monitoring, Dashboards, Personas, RAG und Competitive Intelligence</div>
+      </div>
+    </div>
+
+    <!-- S13 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">13</span>
+        <span class="svc-row-name">KI-Monitoring-Dashboard</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Spezialisierte GEO-Monitoring-Plattformen</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Otterly.ai</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Semrush AI Toolkit</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>BrightEdge Generative Parser</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Authoritas</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">API-Automatisierung (eigenes Monitoring)</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>OpenAI API</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Anthropic API (Claude)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Perplexity API</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>n8n (Workflow-Automatisierung)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Make (Integromat)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Dashboard &amp; Reporting</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Looker Studio</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Notion Dashboard</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Airtable + Charts</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Databox</span>
+          </div>
+        </div>
+        <div class="tool-note">Für Enterprise-Kunden empfiehlt sich eine Kombination: Profound/Otterly für automatisiertes LLM-Testing + Looker Studio für Custom-Dashboards mit eigenen KPIs.</div>
+      </div>
+    </div>
+
+    <!-- S14 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">14</span>
+        <span class="svc-row-name">LLM-Autoritäts-Roadmap</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Roadmap &amp; Projektmanagement</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Notion</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Linear</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Airtable</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Asana</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Visualisierung &amp; Präsentation</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Miro</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Figma (FigJam)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Slides</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Canva</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S15 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">15</span>
+        <span class="svc-row-name">KI-Persona-Entwicklung</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Entity &amp; Profil-Aufbau</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikidata (Person-Entity)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Knowledge Panel</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>LinkedIn (sameAs-Quelle)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wikipedia (für relevante Personen)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">KI-Narrativ-Monitoring</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Otterly.ai</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound</span>
+            <span class="tool-pill tp-manual"><span class="tp-dot"></span>Manuelles Prompt-Testing</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Drittquellen &amp; PR</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Connectively (HARO)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Qwoted</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Speaker-Plattformen (SpeakerHub u.a.)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S16 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">16</span>
+        <span class="svc-row-name">Enterprise-RAG-Beratung</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Technisches Crawling &amp; Readiness</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Screaming Frog SEO Spider</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Search Console (Crawl-Stats)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>robots.txt Tester (Google)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>GTmetrix / PageSpeed Insights</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">RAG-Frameworks (Entwickler)</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>LangChain</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>LlamaIndex</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Pinecone (Vector DB)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Weaviate</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Content-Zugänglichkeit</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>XML Sitemap Generator</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wayback Machine (Archivierbarkeit)</span>
+            <span class="tool-pill tp-manual"><span class="tp-dot"></span>Custom API / Content Feeds</span>
+          </div>
+        </div>
+        <div class="tool-note">LangChain und LlamaIndex sind Open-Source-Frameworks — relevant für technische Beratung, wenn Kunden eigene RAG-Systeme aufbauen oder prüfen möchten.</div>
+      </div>
+    </div>
+
+    <!-- S17 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">17</span>
+        <span class="svc-row-name">Wettbewerber-KI-Intelligence</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">KI-Wettbewerber-Monitoring</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Profound (Competitor Tracking)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Otterly.ai</span>
+            <span class="tool-pill tp-paid"><span class="tp-dot"></span>Semrush AI Toolkit</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Klassische Wettbewerber-Analyse</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Ahrefs (Content Gap)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Semrush (Domain Overview)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>SimilarWeb</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Manuelles Wettbewerber-Tracking</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-manual"><span class="tp-dot"></span>Standardisierte Prompt-Suites</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Alerts (Wettbewerber-News)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Google Sheets (SOV-Tracking)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S18 -->
+    <div class="svc-row">
+      <div class="svc-row-head">
+        <span class="svc-row-num">18</span>
+        <span class="svc-row-name">Trainingsdaten-Strategie</span>
+      </div>
+      <div class="svc-row-body">
+        <div class="tool-group">
+          <div class="tg-label">Crawlbarkeit &amp; Archivierung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Common Crawl (Index-Suche)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Wayback Machine / Internet Archive</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>robots.txt Validator</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Screaming Frog</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Content-Verbreitung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Medium (Veröffentlichung)</span>
+            <span class="tool-pill tp-freemium"><span class="tp-dot"></span>Substack</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>arXiv (Forschung/B2B)</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>ResearchGate</span>
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Zenodo (Open Data)</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tg-label">Lizenzierung</div>
+          <div class="tool-list">
+            <span class="tool-pill tp-free"><span class="tp-dot"></span>Creative Commons Lizenz-Chooser</span>
+            <span class="tool-pill tp-manual"><span class="tp-dot"></span>Direkte LLM-Lizenzverhandlungen</span>
+          </div>
+        </div>
+        <div class="tool-note">Common Crawl ist die primäre Trainingsquelle vieler LLMs. Wer dort mit qualitativem Content vertreten ist, beeinflusst zukünftige Modell-Iterationen — eine der wirkungsvollsten Langzeitstrategien.</div>
+      </div>
+    </div>
+
+  </div><!-- /phase 3 -->
+
+  <!-- Quick Reference Tabelle -->
+  <div class="section-title">📊 Tool-Kurzreferenz nach Kategorie</div>
+  <div style="overflow-x:auto;border-radius:10px;border:1px solid var(--border);background:var(--surface);margin-bottom:24px;">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="background:var(--brand);color:white;font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:11px 14px;text-align:left;">Tool</th>
+          <th style="background:var(--brand);color:white;font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:11px 14px;text-align:left;">Kategorie</th>
+          <th style="background:var(--brand);color:white;font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:11px 14px;text-align:left;">Kosten</th>
+          <th style="background:var(--brand);color:white;font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:11px 14px;text-align:left;">Services</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Profound</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">GEO Monitoring</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#fee2e2;color:#991b1b;">Kostenpflichtig</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S1, S2, S5, S11, S13, S17</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Otterly.ai</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">GEO Monitoring</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#fef3c7;color:#92400e;">Freemium</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S1, S2, S11, S13, S15, S17</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Screaming Frog</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">Technisches Audit</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#fef3c7;color:#92400e;">Freemium</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S4, S7, S16, S18</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Google Rich Results Test</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">Schema-Validierung</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#d1fae5;color:#065f46;">Kostenlos</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S4, S7, S9</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Wikidata</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">Entity-Management</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#d1fae5;color:#065f46;">Kostenlos</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S3, S8, S15</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Connectively (HARO)</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">PR / Earned Media</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#fef3c7;color:#92400e;">Freemium</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S5, S10, S15</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">AlsoAsked</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">Fragen-Recherche</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#fef3c7;color:#92400e;">Freemium</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S9, S12</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Merkle Schema Generator</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">Schema-Erstellung</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#d1fae5;color:#065f46;">Kostenlos</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S6, S7</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">Looker Studio</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">Dashboard &amp; Reporting</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#d1fae5;color:#065f46;">Kostenlos</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S2, S13, S14</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;">n8n / Make</td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">Automatisierung</td>
+          <td style="padding:10px 14px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#fef3c7;color:#92400e;">Freemium</span></td>
+          <td style="padding:10px 14px;font-size:12px;color:var(--muted);">S13 (Monitoring-Automatisierung)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-nav">
+    <a href="03b-umsetzungsguide.html">← Umsetzungsguide</a>
+    <a href="03-leistungsportfolio.html">Leistungsportfolio →</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo">ainomics<sup style="font-size:9px;font-weight:400;">®</sup> <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:2px;">visible results</span></div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Hinweis:</strong> Tool-Verfügbarkeit, Preismodelle und Features ändern sich laufend. Stand Q1 2026. Alle genannten Tools sind Drittanbieter-Produkte ohne Affiliate-Verbindung zu ainomics.
+  </div>
+
+</div>
+</body>
+</html>

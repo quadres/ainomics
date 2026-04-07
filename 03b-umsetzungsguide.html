@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umsetzungsguide | ainomics LLM-Suchoptimierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5; --primary:#1f3d4a; --bg:#eef3f5; --surface:#fff; --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585; --green:#1a9e6e; --red:#c0392b; --amber:#b87a00; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .page-header { background:linear-gradient(135deg,#1f5164,#2E7287); border-radius:16px; padding:40px 44px; margin-bottom:28px; color:white; position:relative; overflow:hidden; }
+  .page-header::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:radial-gradient(circle,rgba(93,188,210,0.15) 0%,transparent 70%); }
+  .page-header .ph-num { font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+  .page-header h1 { font-size:32px; font-weight:900; line-height:1.15; margin-bottom:10px; }
+  .page-header p { font-size:15px; color:rgba(255,255,255,0.65); max-width:640px; line-height:1.65; }
+
+  /* Phase label */
+  .phase-block { margin-bottom:40px; }
+  .phase-label { display:flex; align-items:center; gap:14px; margin-bottom:20px; padding:14px 20px; border-radius:12px; color:white; font-size:13px; font-weight:700; }
+  .phase-1 { background:linear-gradient(135deg,#1f3d4a,#2E7287); }
+  .phase-2 { background:linear-gradient(135deg,#2E7287,#3d8fa5); }
+  .phase-3 { background:linear-gradient(135deg,#1f5164,#5aacbf); }
+  .phase-label .ph-icon { font-size:22px; }
+  .phase-label .ph-title { font-size:16px; font-weight:900; }
+  .phase-label .ph-sub { font-size:11px; font-weight:500; opacity:0.7; margin-top:1px; }
+
+  /* Service cards */
+  .service-list { display:flex; flex-direction:column; gap:18px; }
+  .svc-card { background:var(--surface); border-radius:14px; border:1px solid var(--border); overflow:hidden; }
+  .svc-head { padding:20px 24px 0; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .svc-head-left { flex:1; }
+  .svc-title { font-size:16px; font-weight:800; color:var(--primary); margin-bottom:4px; }
+  .svc-subtitle { font-size:12px; color:var(--muted); }
+  .svc-badge { font-size:10px; font-weight:700; padding:4px 12px; border-radius:10px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+  .badge-crit { background:#d1fae5; color:#065f46; }
+  .badge-high { background:#d0eaf1; color:#1f5164; }
+  .badge-new  { background:#fef3c7; color:#92400e; }
+
+  .svc-body { display:grid; grid-template-columns:1fr 1fr; gap:0; padding:20px 24px 24px; }
+  @media (max-width:800px) { .svc-body { grid-template-columns:1fr; } }
+
+  /* Steps */
+  .steps-col { padding-right:24px; border-right:1px solid var(--border); }
+  @media (max-width:800px) { .steps-col { padding-right:0; border-right:none; border-bottom:1px solid var(--border); padding-bottom:18px; margin-bottom:18px; } }
+  .col-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+  .steps-ol { list-style:none; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .steps-ol li { display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:var(--text); line-height:1.5; }
+  .step-num { width:20px; height:20px; border-radius:50%; background:var(--brand); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+
+  /* Service Levels */
+  .levels-col { padding-left:24px; }
+  @media (max-width:800px) { .levels-col { padding-left:0; } }
+  .level-cards { display:flex; flex-direction:column; gap:8px; }
+  .level-card { border-radius:8px; padding:10px 14px; }
+  .lc-essential  { background:#f0f7fa; border:1px solid #c8dce3; }
+  .lc-professional { background:#e8f5f0; border:1px solid #a8d8c8; }
+  .lc-enterprise  { background:#eef3f5; border-left:3px solid var(--brand-dk); }
+  .lc-name { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+  .lc-essential .lc-name  { color:var(--muted); }
+  .lc-professional .lc-name { color:var(--green); }
+  .lc-enterprise .lc-name  { color:var(--brand-dk); }
+  .lc-desc { font-size:12px; color:var(--text); line-height:1.5; }
+  .lc-includes { margin-top:5px; font-size:11px; color:var(--muted); font-style:italic; }
+
+  /* CTA / nav */
+  .page-nav { display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); }
+  .page-nav a { font-size:12px; font-weight:700; color:var(--brand); text-decoration:none; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+  .page-nav a:hover { background:#e4f0f4; }
+  .footer { background:var(--brand-dk); color:rgba(255,255,255,0.5); border-radius:12px; padding:20px 28px; font-size:12px; line-height:1.8; margin-top:32px; }
+  .footer strong { color:rgba(255,255,255,0.8); } .footer a { color:rgba(255,255,255,0.35); text-decoration:none; }
+  .footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); }
+  .footer-logo { font-size:16px; font-weight:800; color:#fff; }
+  @media (max-width:700px) { .page-header { padding:28px 24px; } .page-header h1 { font-size:24px; } .brand-bar-inner { padding:14px 18px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a class="brand-logo" href="https://ainomics.at/" target="_blank">
+        <div class="brand-logo-wordmark">ainomics<sup>®</sup></div>
+        <div class="brand-logo-tagline">visible results</div>
+      </a>
+      <a class="nav-back" href="03-leistungsportfolio.html">← Leistungsportfolio</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a>
+    <span>›</span>
+    <a href="03-leistungsportfolio.html">Kapitel 03 — Leistungsportfolio</a>
+    <span>›</span>
+    <span>Umsetzungsguide</span>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-num">Kapitel 03 — Anhang</div>
+    <h1>🔧 Umsetzungsguide: 18 Services</h1>
+    <p>Schritt-für-Schritt-Anleitungen für jeden Service — mit konkreten Umsetzungsschritten und den drei ainomics Service-Levels: Essential, Professional und Enterprise.</p>
+  </div>
+
+  <!-- LEGEND -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);padding:6px 12px;background:#f0f7fa;border-radius:8px;border:1px solid var(--border);">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--muted);display:inline-block;"></span> Essential — Beratung &amp; Methodik (Kunde setzt um)
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--green);padding:6px 12px;background:#e8f5f0;border-radius:8px;border:1px solid #a8d8c8;">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;"></span> Professional — Managed Service (ainomics führt aus)
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--brand-dk);padding:6px 12px;background:#eef3f5;border-radius:8px;border:1px solid var(--border);">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--brand-dk);display:inline-block;"></span> Enterprise — Full-Service + laufende Betreuung
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 1 — ANALYSIEREN
+  ════════════════════════════════════════════════ -->
+  <div class="phase-block">
+    <div class="phase-label phase-1">
+      <span class="ph-icon">🔍</span>
+      <div>
+        <div class="ph-title">Phase 1 — Analysieren</div>
+        <div class="ph-sub">Diagnose der aktuellen KI-Sichtbarkeit: Lücken, Ungenauigkeiten, Chancen</div>
+      </div>
+    </div>
+
+    <div class="service-list">
+
+      <!-- S1 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">1 · LLM-Sichtbarkeits-Audit</div>
+            <div class="svc-subtitle">Systematisches Prompt-Testing auf 6+ KI-Plattformen — Baseline der Markenwahrnehmung durch KI</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Prompt-Set definieren:</strong> 50–100 relevante Ziel-Anfragen kartieren (Kategoriesuchen, Wettbewerbsvergleiche, „bestes X für Y"-Anfragen, Markenname direkt).</span></li>
+              <li><span class="step-num">2</span> <span><strong>Plattformen festlegen:</strong> ChatGPT (GPT-4o), Perplexity, Claude, Google AI Overviews, Microsoft Copilot, Gemini — je nach Branche priorisieren.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Systematisches Testing:</strong> Jeden Prompt auf jeder Plattform ausführen, Antworten wörtlich dokumentieren (Screenshot + Textexport).</span></li>
+              <li><span class="step-num">4</span> <span><strong>Markenerwähnungen erfassen:</strong> Wird die Marke genannt? In welchem Kontext? Wie oft? Positiv/neutral/negativ?</span></li>
+              <li><span class="step-num">5</span> <span><strong>Genauigkeits-Scoring:</strong> Jede Erwähnung auf faktische Richtigkeit prüfen, Score 0–100 vergeben.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Lücken-Mapping:</strong> Bei welchen Prompts fehlt die Marke trotz Relevanz? Welche Wettbewerber werden stattdessen genannt?</span></li>
+              <li><span class="step-num">7</span> <span><strong>Baseline-Report:</strong> Ergebnisse in Dashboard eintragen, Prioritäts-Aktionsmatrix ableiten.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">ainomics liefert das standardisierte Prompt-Framework, Testing-Anleitung und Bewertungs-Template. Kunde führt das Testing intern durch.</div>
+                <div class="lc-includes">Inkl.: Prompt-Bibliothek (50 Prompts), Scoring-Vorlage, Auswertungs-Guide</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics führt den vollständigen Audit auf 6 Plattformen durch — inkl. branchenspezifischem Prompt-Set, wörtlicher Erfassung und kommentiertem Report mit Handlungsempfehlungen.</div>
+                <div class="lc-includes">Inkl.: 80+ Prompts, 6 Plattformen, Baseline-Report, Prioritäts-Matrix, 1× Ergebnispräsentation</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Initialer Audit + quartalsweise Wiederholung + automatisiertes Monitoring-Setup + Trend-Tracking über Zeit.</div>
+                <div class="lc-includes">Inkl.: Alles aus Professional + Dashboard-Integration + 4× jährliche Folge-Audits + Alerts bei Verschlechterung</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S2 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">2 · KI-Share-of-Voice-Analyse</div>
+            <div class="svc-subtitle">Zitierfrequenz-Vergleich mit 3–5 Wettbewerbern über 50+ Ziel-Anfragen</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Wettbewerber-Set definieren:</strong> 3–5 relevante direkte Mitbewerber festlegen (Primär- und Sekundärwettbewerb).</span></li>
+              <li><span class="step-num">2</span> <span><strong>Gemeinsame Prompt-Suite:</strong> 50+ Anfragen definieren, bei denen alle Marken theoretisch relevant sind.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Paralleles Testing:</strong> Alle Prompts für alle Marken auf den gleichen Plattformen ausführen.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Zitierfrequenz messen:</strong> Wie oft wird jede Marke je Plattform und je Prompt-Kategorie erwähnt?</span></li>
+              <li><span class="step-num">5</span> <span><strong>SOV-Index berechnen:</strong> Anteil der eigenen Marke an Gesamt-Erwähnungen (Formel: eigene Erwähnungen ÷ Gesamt-Erwähnungen aller Marken).</span></li>
+              <li><span class="step-num">6</span> <span><strong>Muster analysieren:</strong> Bei welchen Prompt-Typen ist man stark/schwach? Welche Wettbewerber dominieren wo?</span></li>
+              <li><span class="step-num">7</span> <span><strong>Strategische Empfehlungen:</strong> Wo sind schnelle Gewinne möglich? Welche Lücken haben höchste Priorität?</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">SOV-Berechnungsmodell und Prompt-Testing-Framework als Template-Set, inkl. Einführungs-Workshop.</div>
+                <div class="lc-includes">Inkl.: SOV-Berechnungsvorlage, Wettbewerber-Prompt-Template, 2h Workshop</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">Monatlicher KI-SOV-Report durch ainomics — inkl. Trend-Analyse, Plattform-Aufschlüsselung und Empfehlungen.</div>
+                <div class="lc-includes">Inkl.: 3–5 Wettbewerber, 50+ Prompts, monatlicher Report, Trend-Charts</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Wöchentliches SOV-Tracking in Echtzeit-Dashboard + automatische Alerts bei signifikanten Verschiebungen + strategische Quarterly Reviews.</div>
+                <div class="lc-includes">Inkl.: Live-Dashboard, Wettbewerber-Alerts, 4× strategische Review-Meetings/Jahr</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S3 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">3 · Entity-Architektur-Audit</div>
+            <div class="svc-subtitle">Prüfung von Knowledge Graph, Wikidata, schema.org und Listings auf Vollständigkeit und Konsistenz</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Google Knowledge Graph prüfen:</strong> Existiert ein Knowledge Panel? Welche Datenfelder sind befüllt, welche fehlen?</span></li>
+              <li><span class="step-num">2</span> <span><strong>Wikidata-Entity analysieren:</strong> Existiert ein Eintrag? Sind Name, Typ, Gründungsdatum, Standort, Website, Social Links korrekt und vollständig?</span></li>
+              <li><span class="step-num">3</span> <span><strong>Wikipedia-Präsenz bewerten:</strong> Existiert ein Artikel? Ist er aktuell, verlinkt und ausreichend referenziert?</span></li>
+              <li><span class="step-num">4</span> <span><strong>schema.org Markup auditieren:</strong> Welche Schema-Typen sind implementiert? Organization, Product, Person — vollständig oder lückenhaft?</span></li>
+              <li><span class="step-num">5</span> <span><strong>Business Listings auf Konsistenz:</strong> NAP-Daten (Name, Adresse, Telefon) über Google, Apple Maps, Bing, Branchenverzeichnisse abgleichen.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Konsistenz-Check:</strong> Widersprechen sich Angaben über Quellen hinweg? Veraltete Daten identifizieren.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Priorisierte Maßnahmen-Liste:</strong> Lücken nach KI-Einfluss gewichten, Umsetzungsreihenfolge festlegen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Entity-Audit-Checkliste und Bewertungsrahmen als Self-Assessment-Tool mit Anleitung.</div>
+                <div class="lc-includes">Inkl.: Entity-Scorecard-Template, Prüfliste für 15 Datenfelder, Erklärungs-Guide</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics führt vollständigen Entity-Architektur-Audit durch — mit detailliertem Report, Vollständigkeits-Score und priorisierten Korrekturmaßnahmen.</div>
+                <div class="lc-includes">Inkl.: 6-Quellen-Audit, Entity-Score-Report, Handlungsplan mit Zeitschätzungen</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Audit + vollständige Umsetzung aller Korrekturen durch ainomics + halbjährliche Re-Auditierung zur Aktualisierung.</div>
+                <div class="lc-includes">Inkl.: Alles aus Professional + Direkte Umsetzung + 2× jährliche Folge-Audits</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">4 · Content-Maschinenlesbarkeits-Audit</div>
+            <div class="svc-subtitle">Seitenweise Bewertung auf KI-Extrahierbarkeit — Struktur, Faktendichte, Entity-Klarheit</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Seiten-Inventar erstellen:</strong> Top-50-Seiten nach Traffic, Relevanz und strategischer Bedeutung priorisieren.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Struktur analysieren:</strong> Klare H1/H2-Hierarchie? Nummerierte Listen? FAQ-Abschnitte? Tabellen für Vergleiche?</span></li>
+              <li><span class="step-num">3</span> <span><strong>Faktendichte bewerten:</strong> Enthält der Content konkrete Zahlen, Daten, Fakten — oder ist er vage und werblich?</span></li>
+              <li><span class="step-num">4</span> <span><strong>Entity-Klarheit prüfen:</strong> Sind Markenname, Produkte, Personen, Standort klar und konsistent benannt?</span></li>
+              <li><span class="step-num">5</span> <span><strong>Schema-Nutzung bewerten:</strong> Welche Seiten haben schema.org Markup? Ist es vollständig und korrekt?</span></li>
+              <li><span class="step-num">6</span> <span><strong>Maschinenlesbarkeits-Score:</strong> Jede Seite erhält einen Score 0–100 basierend auf gewichteten Kriterien.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Scorecard ausgeben:</strong> Priorisierungsliste welche Seiten zuerst überarbeitet werden müssen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Bewertungs-Framework und Scoring-Vorlage für interne Teams — inkl. Kriterien-Erklärvideo.</div>
+                <div class="lc-includes">Inkl.: Scoring-Template (6 Kriterien), Beispielauswertung, Priorisierungsmatrix</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics auditiert bis zu 50 Seiten — liefert seitenweise Scorecards und priorisierte Überarbeitungsempfehlungen mit konkreten Textbeispielen.</div>
+                <div class="lc-includes">Inkl.: Audit bis 50 Seiten, Scorecard-Report, Top-10-Seiten mit detaillierten Verbesserungshinweisen</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Vollständiger Site-Audit + direkte Überarbeitung der priorisierten Seiten durch ainomics + jährliche Re-Auditierung.</div>
+                <div class="lc-includes">Inkl.: Unbegrenzte Seiten, Content-Überarbeitung (Top 20 Seiten), Jahres-Re-Audit</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S5 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">5 · Citation Source Map</div>
+            <div class="svc-subtitle">Reverse-Engineering: Welche spezifischen Quellen nutzen KI-Systeme aktuell über Ihre Marke?</div>
+          </div>
+          <span class="svc-badge badge-high">Hoch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Quellen-transparente Plattformen nutzen:</strong> Perplexity und Bing Copilot zeigen Quellen direkt an — gezielt für Source-Mapping einsetzen.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Prompt-Suite ausführen:</strong> 30–50 markenbezogene Anfragen und Kategoriesuchen testen, alle genannten Quellen erfassen.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Quellen kategorisieren:</strong> Wikipedia, Nachrichtenmedien, Bewertungsplattformen, Branchenverzeichnisse, eigene Website — nach Typ sortieren.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Häufigkeit messen:</strong> Welche Quellen erscheinen am häufigsten? Welche haben den größten Einfluss auf KI-Antworten?</span></li>
+              <li><span class="step-num">5</span> <span><strong>Qualität bewerten:</strong> Sind die genutzten Quellen aktuell, akkurat und vorteilhaft für die Marke?</span></li>
+              <li><span class="step-num">6</span> <span><strong>Lücken-Analyse:</strong> Welche wichtigen Quelltypen fehlen? Wo sollte die Marke präsenter sein?</span></li>
+              <li><span class="step-num">7</span> <span><strong>Investitionsstrategie:</strong> Priorisieren, welche neuen Quellen erschlossen werden müssen für maximalen Zitiereinfluss.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Source-Mapping-Anleitung und Erfassungsvorlage für eigenständige Durchführung.</div>
+                <div class="lc-includes">Inkl.: Methodik-Guide, Quellen-Kategorisierungs-Template</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics erstellt vollständige Citation Source Map — inkl. Quellen-Ranking, Lückenanalyse und priorisierten Erschließungsempfehlungen.</div>
+                <div class="lc-includes">Inkl.: Source Map Report, Top-20-Quellen-Analyse, Empfehlungs-Backlog, Quartals-Update</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Laufende Source Map mit quartalsweiser Aktualisierung + direkte Umsetzung der Quellen-Erschließungsstrategie durch ainomics.</div>
+                <div class="lc-includes">Inkl.: 4× jährliche Updates, PR-Coordination für neue Quellen, Fortschritts-Tracking</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /service-list phase 1 -->
+  </div><!-- /phase-block -->
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 2 — OPTIMIEREN
+  ════════════════════════════════════════════════ -->
+  <div class="phase-block">
+    <div class="phase-label phase-2">
+      <span class="ph-icon">⚙️</span>
+      <div>
+        <div class="ph-title">Phase 2 — Optimieren</div>
+        <div class="ph-sub">Systematische Umsetzung: Inhalte, Struktur, Entity-Daten und Drittanbieter-Präsenz optimieren</div>
+      </div>
+    </div>
+
+    <div class="service-list">
+
+      <!-- S6 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">6 · Entity-Page-Erstellung</div>
+            <div class="svc-subtitle">Umfassende, faktenreiche, schema-ausgezeichnete Seiten für Marke, Produkte und Personas</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Entity-Scope definieren:</strong> Welche Entities brauchen Seiten? (Marke, Produkte, Dienstleistungen, Gründer, Kernthemen)</span></li>
+              <li><span class="step-num">2</span> <span><strong>Fakten und Daten zusammenstellen:</strong> Alle bekannten Fakten je Entity sammeln — Gründungsjahr, USPs, Zahlen, Auszeichnungen, Kunden.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Seiten-Struktur entwerfen:</strong> Klare Hierarchie: Definition → Kernfakten → Leistungen/Features → Nachweise → FAQ → Quellen.</span></li>
+              <li><span class="step-num">4</span> <span><strong>LLM-optimierten Text verfassen:</strong> Faktenreich, präzise, Q&A-Elemente integrieren, Werbejargon vermeiden.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Schema.org Markup integrieren:</strong> Organization / Product / Person Schema als JSON-LD implementieren.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Cross-Linking aufbauen:</strong> Interne Verlinkung zwischen Entity-Seiten und thematisch verwandten Inhalten.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Externe Bestätigung sichern:</strong> Sicherstellen, dass externe Quellen (PR, Verzeichnisse) auf die Entity Page verweisen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Entity-Page-Vorlage und Content-Briefing-Framework — Kunde erstellt Inhalte, ainomics reviewed und gibt Feedback.</div>
+                <div class="lc-includes">Inkl.: Seitenstruktur-Template, Inhalts-Briefing, 1× Review-Runde</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics konzipiert und schreibt Entity Pages für bis zu 5 Kernentities — inkl. Schema-Markup und Implementierungs-Support.</div>
+                <div class="lc-includes">Inkl.: Bis 5 Entity Pages, vollständige Texterstellung, Schema-JSON-LD, 2 Revisionsrunden</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Vollständiges Entity-Page-Ökosystem für alle relevanten Entities + laufende Aktualisierung und Erweiterung im Retainer.</div>
+                <div class="lc-includes">Inkl.: Unbegrenzte Entities, Implementierung, quartalsweise Aktualisierung, neue Entities on demand</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">7 · Strukturierte-Daten-Implementierung</div>
+            <div class="svc-subtitle">schema.org-Markup (Organization, Product, FAQPage, HowTo u.a.) auf allen Schlüsselseiten</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Schema-Typen identifizieren:</strong> Für jede Seitenkategorie den passenden Schema-Typ festlegen (Organization, Product, Person, FAQPage, Article, HowTo, BreadcrumbList).</span></li>
+              <li><span class="step-num">2</span> <span><strong>Bestehende Implementierungen prüfen:</strong> Fehler und Lücken im aktuellen Markup via Google Rich Results Test und Schema.org Validator identifizieren.</span></li>
+              <li><span class="step-num">3</span> <span><strong>JSON-LD-Code erstellen:</strong> Für jede Seite/Seitentyp vollständiges, valides JSON-LD mit allen relevanten Eigenschaften erstellen.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Implementierung:</strong> JSON-LD in &lt;head&gt; einbetten — CMS-abhängig via Plugin, Template-Anpassung oder direkten Code-Einbau.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Validierung:</strong> Alle implementierten Seiten mit Rich Results Test und Schema Markup Validator prüfen, Fehler beheben.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Google Search Console monitoring:</strong> Rich-Result-Status verfolgen, Fehler-Alerts einrichten.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Laufende Pflege:</strong> Bei Content-Updates sicherstellen, dass Schema-Daten aktuell bleiben.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Schema-Code-Vorlagen für die häufigsten Typen + Implementierungsanleitung für gängige CMS (WordPress, Webflow, Shopify).</div>
+                <div class="lc-includes">Inkl.: JSON-LD-Templates (7 Typen), CMS-Anleitungen, Validierungs-Checkliste</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics erstellt und implementiert vollständiges Schema-Markup für alle Seiten-Templates + Validierung + 3 Monate Nachbetreuung.</div>
+                <div class="lc-includes">Inkl.: Alle Schema-Typen, direkte Implementierung, Validierungs-Report, 3 Monate Support</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Laufendes Schema-Management: Implementierung + monatliche Prüfung + Anpassung bei Content-Änderungen + neue Seiten automatisch mit Markup versehen.</div>
+                <div class="lc-includes">Inkl.: Alles aus Professional + monatliche Prüfung, Schema-Governance-Prozess</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S8 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">8 · Knowledge-Graph-Management</div>
+            <div class="svc-subtitle">Google Knowledge Panel, Wikidata-Entity, Wikipedia-Präsenz beanspruchen, befüllen und aktuell halten</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Google Knowledge Panel beanspruchen:</strong> Panel via Google Search verifizieren und offiziell in Besitz nehmen.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Panel-Daten vervollständigen:</strong> Logo, Beschreibung, Kontakt, Social-Links, Kategorien, Gründungsdaten — alle verfügbaren Felder befüllen.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Wikidata-Entity erstellen/optimieren:</strong> Entity mit allen Pflichtfeldern anlegen: Label, Beschreibung, Aliases, Instanceof, Gegründet, HQ, Website, Social.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Wikipedia-Präsenz aufbauen:</strong> Für Wikipedia-relevante Marken: Artikel erstellen oder bestehenden optimieren (Quellen, Struktur, Kategorien).</span></li>
+              <li><span class="step-num">5</span> <span><strong>Datenkonsistenz sichern:</strong> Alle Entity-Daten müssen über Knowledge Graph, Wikidata und Website konsistent sein.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Verknüpfungen herstellen:</strong> Wikidata-QID in schema.org sameAs-Eigenschaft einbinden, Social-Profiles verknüpfen.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Monatliche Pflege:</strong> Änderungen (neue Produkte, Führungswechsel, Awards) zeitnah aktualisieren.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Schritt-für-Schritt-Anleitung für Knowledge Panel Claim und Wikidata-Einrichtung — inkl. Videotutorials und Templates.</div>
+                <div class="lc-includes">Inkl.: Setup-Guide, Wikidata-Vorlage, Knowledge-Panel-Checkliste</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics übernimmt vollständiges Knowledge Graph Setup — Panel-Claim, Wikidata-Einrichtung, Wikipedia-Analyse und Optimierungsplan.</div>
+                <div class="lc-includes">Inkl.: Panel-Claim, Wikidata-Setup, Wikipedia-Audit, Konsistenz-Report, Übergabe-Doku</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Setup + monatliches Knowledge-Graph-Management: Daten aktuell halten, neue Entwicklungen einpflegen, Qualität sichern.</div>
+                <div class="lc-includes">Inkl.: Alles aus Professional + monatliches Management, Änderungs-Updates innerhalb 48h</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S9 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">9 · KI-optimierter FAQ/Q&A-Content</div>
+            <div class="svc-subtitle">Frage-Antwort-formatierten Content erstellen, der auf exakte Prompts von KI-Nutzern abzielt</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Top-Anfragen ableiten:</strong> Aus Prompt-Testing, Google Search Console, Kundenservice und Sales-Gesprächen die häufigsten Fragen extrahieren.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Fragen priorisieren:</strong> Nach Suchvolumen, KI-Relevanz und strategischer Wichtigkeit ordnen — Top-50-FAQ-Kandidaten auswählen.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Antworten strukturieren:</strong> Jede Antwort: direkte Kernaussage (1–2 Sätze) + Erklärung + Nachweis/Beispiel + weiterführende Links.</span></li>
+              <li><span class="step-num">4</span> <span><strong>FAQPage-Schema implementieren:</strong> Alle FAQ-Paare mit vollständigem FAQPage JSON-LD auszeichnen.</span></li>
+              <li><span class="step-num">5</span> <span><strong>In Seitenstruktur integrieren:</strong> FAQs thematisch zu Entity Pages, Produkt- und Servicseiten hinzufügen.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Testing:</strong> Direkte Prompts der FAQ-Fragen in KI-Systemen testen — erscheint die Marke in Antworten?</span></li>
+              <li><span class="step-num">7</span> <span><strong>Laufend erweitern:</strong> Monatlich neue relevante Fragen ergänzen auf Basis von Prompt-Testing-Erkenntnissen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">FAQ-Content-Framework und Q&A-Strukturvorlage mit Anleitung für interne Teams.</div>
+                <div class="lc-includes">Inkl.: FAQ-Briefing-Template, Antwortstruktur-Guide, FAQPage-Schema-Vorlage</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics recherchiert, strukturiert und schreibt 30–50 FAQ-Paare inkl. FAQPage-Schema und Empfehlung zur Seitenintegration.</div>
+                <div class="lc-includes">Inkl.: 30–50 FAQ-Paare, vollständige Texterstellung, Schema-Implementierung, Platzierungsempfehlungen</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Laufende FAQ-Bibliothek: monatlich neue Fragen ergänzen, bestehende aktualisieren, Wirksamkeit tracken und optimieren.</div>
+                <div class="lc-includes">Inkl.: 10+ neue FAQ/Monat, Performance-Tracking, Themen-Briefings aus Prompt-Testing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S10 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">10 · Drittanbieter-Zitier-Programm</div>
+            <div class="svc-subtitle">PR, Medienarbeit und Bewertungsplattform-Strategie für autoritative externe Erwähnungen</div>
+          </div>
+          <span class="svc-badge badge-high">Hoch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Quelltypen priorisieren:</strong> Welche externen Quellkategorien sind für die Branche am einflussreichsten? (Fachmedien, Analysten, Bewertungsportale, Verbände)</span></li>
+              <li><span class="step-num">2</span> <span><strong>Medien-Ziel-Liste erstellen:</strong> Top-20 prioritäre Medien und Plattformen für Platzierungen identifizieren.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Bewertungsplattform-Präsenz aufbauen:</strong> Profile auf G2, Capterra, Trustpilot, kununu etc. — vollständig befüllen, Bewertungs-Momentum aufbauen.</span></li>
+              <li><span class="step-num">4</span> <span><strong>PR-Strategie entwickeln:</strong> Storys, Studien, Expertenkommentare und Daten-Releases, die autoritative Medien aufgreifen werden.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Earned-Media-Kampagnen:</strong> Pressemitteilungen, Journalisten-Outreach, Gastbeiträge und Podcast-Auftritte umsetzen.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Branchenverzeichnisse optimieren:</strong> Einträge in relevanten Verzeichnissen vollständig und konsistent befüllen.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Zitiereinfluss tracken:</strong> Neue Drittquellen in Citation Source Map eintragen, Auswirkung auf KI-Zitierrate messen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Strategie-Workshop und priorisierte Quellen-Liste + Anleitung für Bewertungsplattform-Setup und PR-Outreach.</div>
+                <div class="lc-includes">Inkl.: Quellen-Priorisierungs-Workshop, Medien-Zielliste, Bewertungsplattform-Guide</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics koordiniert monatlichen PR-Output + Bewertungsplattform-Management + Tracking der Zitierquellen-Entwicklung.</div>
+                <div class="lc-includes">Inkl.: 2× Medienplatzierungen/Monat, Bewertungsplattform-Management, monatlicher Fortschritts-Report</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Vollständiges KI-natives PR-Retainer: strategische Medienarbeit, Thought-Leadership-Content, Analysten-Beziehungen, laufendes Zitierquellen-Tracking.</div>
+                <div class="lc-includes">Inkl.: 4+ Platzierungen/Monat, Analysten-Briefings, Thought-Leadership-Content, Jahres-Strategie</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S11 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">11 · Narrativ-Korrektur</div>
+            <div class="svc-subtitle">Ungenaue oder negative KI-generierte Narrative identifizieren und systematisch korrigieren</div>
+          </div>
+          <span class="svc-badge badge-high">Hoch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Negative Narrative dokumentieren:</strong> Aus LLM-Sichtbarkeits-Audit alle unzutreffenden, veralteten oder negativen KI-Darstellungen erfassen.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Quellen-Ursachenanalyse:</strong> Welche Quellen sind verantwortlich für das negative Narrativ? (Alte Presseartikel, negative Reviews, Wettbewerber-Inhalte?)</span></li>
+              <li><span class="step-num">3</span> <span><strong>Korrektiv-Content-Strategie:</strong> Autoritative Gegendarstellungen, aktualisierte Fakten und positive Narrative planen, die die falschen Aussagen überschreiben.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Content erstellen und veröffentlichen:</strong> Entity Pages, FAQ-Korrekturen, Pressemitteilungen und Gastbeiträge mit korrekten Informationen publizieren.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Quellen-Strategie umsetzen:</strong> Autoritative Quellen aktiv auf korrekte Darstellungen hinweisen — Wikipedia-Korrekturen, Panel-Updates.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Re-Testing nach 4–6 Wochen:</strong> Dieselben Prompts erneut testen — hat sich das KI-Narrativ verändert?</span></li>
+              <li><span class="step-num">7</span> <span><strong>Laufendes Monitoring:</strong> Rückfall auf negative Narrative frühzeitig erkennen und sofort gegensteuern.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Narrativ-Audit-Framework und Korrektur-Strategie-Template — Kunde setzt Maßnahmen intern um.</div>
+                <div class="lc-includes">Inkl.: Narrativ-Audit-Vorlage, Korrektur-Strategie-Guide, Re-Testing-Protokoll</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics identifiziert alle negativen Narrative, entwickelt Korrekturstrategie und setzt Content-Maßnahmen innerhalb eines Sprint-Projekts um.</div>
+                <div class="lc-includes">Inkl.: Narrativ-Analyse, Korrektur-Sprint (4–6 Wochen), Re-Testing, Abschluss-Report</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Laufendes Narrativ-Management: monatliches Monitoring, sofortige Reaktion auf neue negative Darstellungen, Eskalations-Protokoll.</div>
+                <div class="lc-includes">Inkl.: Monatliches Narrativ-Monitoring, Alert-System, 48h Reaktionszeit bei kritischen Narrative-Problemen</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S12 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">12 · Prompt-Ziel-Strategie</div>
+            <div class="svc-subtitle">Hochwertige Ziel-Anfragen kartieren und für jede einen Content-Plan entwickeln</div>
+          </div>
+          <span class="svc-badge badge-high">Hoch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Ziel-Anfragen definieren:</strong> Alle Prompts kartieren, bei denen die Marke in KI-Antworten erscheinen sollte — Kategoriesuchen, Vergleiche, Kaufentscheidungsfragen.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Aktuelle Präsenz bewerten:</strong> Bei welchen Prompts wird die Marke bereits genannt? Bei welchen nicht?</span></li>
+              <li><span class="step-num">3</span> <span><strong>Intent-Analyse:</strong> Was sucht der Nutzer wirklich mit diesem Prompt? Informationssuche, Vergleich, direkte Kaufentscheidung?</span></li>
+              <li><span class="step-num">4</span> <span><strong>Content-Lücken kartieren:</strong> Welche Inhalte fehlen, damit KI die Marke für diesen Prompt nennen würde?</span></li>
+              <li><span class="step-num">5</span> <span><strong>Priorisierte Content-Agenda erstellen:</strong> Prompts nach strategischer Wichtigkeit × aktuellem Lückengrad gewichten.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Content-Maßnahmen zuordnen:</strong> Für jeden Top-Prompt: konkrete Content-Maßnahme (Entity Page, FAQ, PR-Thema) definieren.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Quartalsweise aktualisieren:</strong> Neue Trends, Produkte und Marktveränderungen in die Prompt-Ziel-Strategie integrieren.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Prompt-Mapping-Framework und Priorisierungs-Template für interne Durchführung.</div>
+                <div class="lc-includes">Inkl.: Prompt-Kategorie-Framework, Priorisierungsmatrix, Content-Zuordnungs-Template</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics erstellt vollständige Prompt-Ziel-Karte mit 100+ priorisierten Anfragen, Content-Lückenanalyse und Umsetzungsplan.</div>
+                <div class="lc-includes">Inkl.: 100+ Prompts kartiert, Lücken-Analyse, priorisierter Content-Plan, Präsentation</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Quartalsweise Aktualisierung der Prompt-Ziel-Strategie + laufende Content-Umsetzung gegen den Plan + Fortschritts-Tracking.</div>
+                <div class="lc-includes">Inkl.: 4× jährliche Strategie-Updates, Content-Produktion gegen Plan, KPI-Tracking</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /service-list phase 2 -->
+  </div><!-- /phase-block -->
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 3 — ENTWICKELN
+  ════════════════════════════════════════════════ -->
+  <div class="phase-block">
+    <div class="phase-label phase-3">
+      <span class="ph-icon">🚀</span>
+      <div>
+        <div class="ph-title">Phase 3 — Entwickeln</div>
+        <div class="ph-sub">Dauerhafte LLM-Autoritätsinfrastruktur: Monitoring, Roadmap, Personas, RAG, Intelligence</div>
+      </div>
+    </div>
+
+    <div class="service-list">
+
+      <!-- S13 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">13 · KI-Monitoring-Dashboard</div>
+            <div class="svc-subtitle">Maßgeschneidertes Dashboard zur Echtzeit-Verfolgung von Zitierrate, Narrativ und SOV</div>
+          </div>
+          <span class="svc-badge badge-crit">Kritisch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>KPI-Set definieren:</strong> Welche Metriken sollen getrackt werden? (Zitierrate, SOV, Narrativ-Score, Plattform-Abdeckung, Entity-Score)</span></li>
+              <li><span class="step-num">2</span> <span><strong>Prompt-Testing-Suite aufbauen:</strong> Standardisiertes Set von Ziel-Prompts für wöchentliches Routine-Testing festlegen.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Testing-Prozess automatisieren:</strong> Wo möglich: API-Zugang zu LLMs nutzen für automatisierte Prompt-Ausführung und Daten-Erfassung.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Dashboard aufbauen:</strong> Ergebnisse in Reporting-Tool visualisieren (Google Data Studio, Notion, maßgeschneiderte Lösung) — Trend-Charts, SOV-Grafiken, Narrativ-Logs.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Alert-System konfigurieren:</strong> Automatische Benachrichtigungen bei signifikantem Rückgang der Zitierrate oder negativen Narrativ-Veränderungen.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Reporting-Rhythmus:</strong> Wöchentlichen automatischen Report und monatlichen Analyse-Bericht einrichten.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Kontinuierliche Optimierung:</strong> Dashboard und Prompt-Suite regelmäßig erweitern — neue Plattformen, neue KPI-Dimensionen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Monitoring-Framework und Dashboard-Template (Google Sheets / Notion) für eigenständigen Aufbau — inkl. Setup-Anleitung.</div>
+                <div class="lc-includes">Inkl.: Dashboard-Vorlage, KPI-Definition-Guide, wöchentliches Testing-Protokoll</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics baut und betreibt das KI-Monitoring-Dashboard — wöchentliches Testing, monatliche Reports, Alert-System inkludiert.</div>
+                <div class="lc-includes">Inkl.: Dashboard-Setup, wöchentliches Testing, monatlicher Report, E-Mail-Alerts</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Vollständiges Echtzeit-KI-Intelligence-System: automatisiertes Testing, Live-Dashboard, API-Integrationen, dedizierter Analyst für Interpretation.</div>
+                <div class="lc-includes">Inkl.: Tägliches Monitoring, Live-Dashboard, API-Automatisierung, monatliche Strategie-Review mit Analyst</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S14 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">14 · LLM-Autoritäts-Roadmap</div>
+            <div class="svc-subtitle">12-monatige strategische Roadmap mit priorisierten Maßnahmen und Meilensteinen</div>
+          </div>
+          <span class="svc-badge badge-high">Hoch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Baseline integrieren:</strong> Alle Audit-Ergebnisse (Sichtbarkeit, Entity, Content, Quellen) als Ausgangspunkt in die Roadmap einfließen lassen.</span></li>
+              <li><span class="step-num">2</span> <span><strong>12-Monats-Ziele definieren:</strong> Messbare KPIs für Zitierrate, SOV, Entity-Score und Plattform-Abdeckung festlegen.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Maßnahmen priorisieren:</strong> Alle identifizierten Services und Aktionen nach Impact × Aufwand in einer Prioritätsmatrix bewerten.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Phasierung planen:</strong> Quick Wins (0–3 Monate), Aufbau (3–6 Monate), Skalierung (6–12 Monate) zeitlich einplanen.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Ressourcen zuordnen:</strong> Budget, Verantwortlichkeiten (intern/ainomics) und benötigte Kapazitäten je Maßnahme festhalten.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Meilensteine definieren:</strong> Klare Checkpoints alle 90 Tage mit messbaren Fortschrittsindikatoren.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Quartalsweise Review:</strong> Roadmap an aktuelle Marktentwicklungen, Plattform-Updates und Ergebnisse anpassen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Roadmap-Template und Priorisierungs-Framework für eigenständige Planung — inkl. halbtägigem Strategie-Workshop.</div>
+                <div class="lc-includes">Inkl.: Roadmap-Vorlage, Impact-Effort-Matrix, Strategie-Workshop (halbtags)</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics erstellt vollständige 12-Monats-LLM-Autoritäts-Roadmap basierend auf Audit-Ergebnissen — inkl. Priorisierung, Budget-Einschätzung und Präsentation.</div>
+                <div class="lc-includes">Inkl.: Vollständige Roadmap, Maßnahmen-Backlog, Budget-Schätzung, Kickoff-Präsentation</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Roadmap + laufendes strategisches Account-Management: quartalsweise Reviews, Anpassungen an Marktveränderungen, Fortschritts-Tracking gegen Plan.</div>
+                <div class="lc-includes">Inkl.: Roadmap + 4× Strategie-Reviews/Jahr, laufende Roadmap-Pflege, Executive Reporting</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S15 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">15 · KI-Persona-Entwicklung</div>
+            <div class="svc-subtitle">Autoritative Entity-Profile für Führungskräfte und Personen des öffentlichen Lebens aufbauen</div>
+          </div>
+          <span class="svc-badge badge-high">Hoch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Persona-Scope definieren:</strong> Welche Personen sollen optimiert werden? (CEO, Gründer, Experten, Sprecher) — Priorisierung nach strategischer Relevanz.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Aktuellen KI-Snapshot auditieren:</strong> Was sagen ChatGPT, Perplexity, Claude heute über die Person? Lücken und Ungenauigkeiten dokumentieren.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Biografie-Content erstellen:</strong> Umfassende, faktenreiche Biografie-Seite mit Person-Schema, Leistungen, Expertise-Belegen und Medienpräsenz.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Person-Schema implementieren:</strong> JSON-LD Person-Markup mit sameAs-Links zu LinkedIn, Twitter, Wikipedia, Wikidata.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Wikidata-Eintrag aufbauen:</strong> Person-Entity mit vollständigen Attributen in Wikidata anlegen.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Drittanbieter-Erwähnungen aufbauen:</strong> Gastbeiträge, Podcast-Interviews, Konferenz-Redner-Profile, Medienerwähnungen systematisch aufbauen.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Laufendes Reputations-Monitoring:</strong> Regelmäßig testen, was KI über die Person sagt — Narrative proaktiv pflegen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Persona-Aufbau-Framework und Biografie-Content-Template — inkl. Person-Schema-Vorlage und Anleitung für Wikidata-Eintrag.</div>
+                <div class="lc-includes">Inkl.: Biografie-Template, Person-Schema-Vorlage, Wikidata-Anleitung, Monitoring-Protokoll</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics erstellt vollständiges Persona-Profil: KI-Audit, Biografie-Content, Schema-Implementierung, Wikidata-Setup und initialer Drittquellen-Plan.</div>
+                <div class="lc-includes">Inkl.: KI-Narrativ-Audit, Biografie-Seite, Schema + Wikidata, Quellen-Aufbau-Plan, Kickoff</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Vollständiges Personal-Brand-Management: Setup + laufender Content-Aufbau (Gastbeiträge, Interviews) + monatliches KI-Reputations-Monitoring.</div>
+                <div class="lc-includes">Inkl.: Alles aus Professional + 2 Drittquellen-Platzierungen/Monat, monatliches Monitoring-Report</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S16 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">16 · Enterprise-RAG-Beratung</div>
+            <div class="svc-subtitle">Content- und Datenarchitektur für Enterprise-RAG-Deployments optimieren</div>
+          </div>
+          <span class="svc-badge badge-new">Aufkommend</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>RAG-Use-Case definieren:</strong> In welchen Enterprise-Kontexten soll der Content abgerufen werden? (Beschaffungs-KI, Sales-Intelligence, Research-Tools)</span></li>
+              <li><span class="step-num">2</span> <span><strong>Technische RAG-Readiness bewerten:</strong> robots.txt, API-Zugänglichkeit, Ladezeiten, JavaScript-Rendering, Content-Format — alle Faktoren analysieren.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Content-Architektur optimieren:</strong> Seitenstruktur, Datei-Formate und Content-Organisation auf maschinellen Abruf ausrichten.</span></li>
+              <li><span class="step-num">4</span> <span><strong>API-Zugänglichkeit sicherstellen:</strong> Wo sinnvoll: strukturierte Daten-Feeds, sitemap.xml-Optimierung und Content-APIs bereitstellen.</span></li>
+              <li><span class="step-num">5</span> <span><strong>RAG-Test-Simulation:</strong> Testen, wie Enterprise-RAG-Systeme den Content abrufen und verarbeiten würden.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Implementierungs-Roadmap:</strong> Priorisierte technische Maßnahmen mit Aufwandsschätzungen und erwarteter RAG-Verbesserung.</span></li>
+              <li><span class="step-num">7</span> <span><strong>Nachtest und Validation:</strong> Nach Implementierung erneutes Testing bestätigt verbesserte RAG-Zugänglichkeit.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">RAG-Readiness-Checkliste und technisches Self-Assessment — inkl. erklärendem Briefing zu RAG-Architektur-Anforderungen.</div>
+                <div class="lc-includes">Inkl.: RAG-Readiness-Checkliste, Technisches Briefing (1h), Priorisierungs-Template</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics führt vollständigen RAG-Readiness-Audit durch und liefert priorisierte technische Roadmap mit konkreten Umsetzungsempfehlungen.</div>
+                <div class="lc-includes">Inkl.: Technischer Audit, RAG-Score-Report, Umsetzungs-Roadmap, 1× Entwickler-Briefing</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Vollständige RAG-Optimierungsberatung: Audit + begleitete Implementierung + Testing + laufende Beratung bei technischen Updates.</div>
+                <div class="lc-includes">Inkl.: Audit, Implementierungs-Begleitung, Testing, 6 Monate Support-Retainer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S17 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">17 · Wettbewerber-KI-Intelligence</div>
+            <div class="svc-subtitle">Monatlicher Report über Wettbewerber-Darstellungen in KI-Antworten und deren Strategien</div>
+          </div>
+          <span class="svc-badge badge-high">Hoch</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Wettbewerber-Set festlegen:</strong> 3–5 primäre und 3–5 sekundäre Wettbewerber für kontinuierliches Monitoring definieren.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Monitoring-Prompt-Suite aufbauen:</strong> Kategorie-Anfragen, Vergleichs-Anfragen und spezifische Wettbewerber-Prompts standardisieren.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Monatliches Testing:</strong> Alle Prompts für alle Wettbewerber auf allen relevanten KI-Plattformen ausführen — Ergebnisse erfassen.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Strategie-Muster analysieren:</strong> Welche Content-Typen, Entity-Signale oder PR-Aktivitäten treiben den Zitier-Vorteil der Wettbewerber?</span></li>
+              <li><span class="step-num">5</span> <span><strong>Benchmarking:</strong> Eigene KPI-Werte gegen Wettbewerber-Werte stellen — SOV, Zitierrate, Plattform-Abdeckung.</span></li>
+              <li><span class="step-num">6</span> <span><strong>Erkenntnisse übertragen:</strong> Wettbewerber-Stärken als Lernquelle nutzen — welche Taktiken sind adaptierbar?</span></li>
+              <li><span class="step-num">7</span> <span><strong>Monatlichen Intelligence-Report erstellen:</strong> Executive Summary + Trend-Analyse + Handlungsempfehlungen.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Wettbewerber-Monitoring-Framework und Report-Template für eigenständige Durchführung.</div>
+                <div class="lc-includes">Inkl.: Monitoring-Prompt-Vorlage, Wettbewerber-Analyse-Template, Benchmarking-Framework</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics erstellt monatlichen Wettbewerber-KI-Intelligence-Report — mit Zitiervergleich, Strategie-Analyse und priorisierten Gegenmaßnahmen.</div>
+                <div class="lc-includes">Inkl.: Monatlicher Report, 3–5 Wettbewerber, alle relevanten Plattformen, Handlungsempfehlungen</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Wöchentliches Wettbewerber-Tracking + monatlicher Deep-Dive-Report + quartalsweises strategisches Review mit Gegenstrategie-Entwicklung.</div>
+                <div class="lc-includes">Inkl.: Wöchentliches Alert-System, monatlicher Report, 4× Strategie-Sessions/Jahr</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S18 -->
+      <div class="svc-card">
+        <div class="svc-head">
+          <div class="svc-head-left">
+            <div class="svc-title">18 · Trainingsdaten-Strategie</div>
+            <div class="svc-subtitle">Content in zukünftigen LLM-Trainingsdatensätzen positionieren — langfristige Autorität aufbauen</div>
+          </div>
+          <span class="svc-badge badge-new">Aufkommend</span>
+        </div>
+        <div class="svc-body">
+          <div class="steps-col">
+            <div class="col-label">Schritt-für-Schritt-Umsetzung</div>
+            <ol class="steps-ol">
+              <li><span class="step-num">1</span> <span><strong>Content-Asset-Inventar:</strong> Alle öffentlichen Inhalte inventarisieren — Artikel, Studien, Whitepapers, Interviews, Pressemitteilungen.</span></li>
+              <li><span class="step-num">2</span> <span><strong>Common-Crawl-Sichtbarkeit prüfen:</strong> Ist der Website-Content in Common Crawl enthalten? robots.txt und Crawl-Zugänglichkeit sicherstellen.</span></li>
+              <li><span class="step-num">3</span> <span><strong>Hochwertigen Original-Content produzieren:</strong> Studien, Datensätze, Branchen-Benchmarks und Expert-Content, der häufig zitiert und archiviert wird.</span></li>
+              <li><span class="step-num">4</span> <span><strong>Open-Licensing-Strategie:</strong> Ausgewählte Inhalte unter Creative-Commons lizenzieren, um Wiederverwendung und Archivierung zu maximieren.</span></li>
+              <li><span class="step-num">5</span> <span><strong>Aggregator-Plattformen nutzen:</strong> Content auf Plattformen veröffentlichen, die als LLM-Trainingsquellen gelten (Medium, Substack, arXiv, ResearchGate wo relevant).</span></li>
+              <li><span class="step-num">6</span> <span><strong>Partnerschaften evaluieren:</strong> Möglichkeiten zur direkten Datenlizenzierung mit KI-Unternehmen prüfen (für große Marken mit proprietären Datensätzen).</span></li>
+              <li><span class="step-num">7</span> <span><strong>Langfristige Content-Strategie ausrichten:</strong> Alle Content-Produktionsentscheidungen auf Trainingsdaten-Relevanz und Archivierbarkeit ausrichten.</span></li>
+            </ol>
+          </div>
+          <div class="levels-col">
+            <div class="col-label">ainomics Service-Levels</div>
+            <div class="level-cards">
+              <div class="level-card lc-essential">
+                <div class="lc-name">Essential</div>
+                <div class="lc-desc">Strategisches Briefing zu Trainingsdaten-Mechanismen + Checkliste für maximale Crawlbarkeit und Content-Archivierbarkeit.</div>
+                <div class="lc-includes">Inkl.: Strategie-Briefing (2h), Crawlbarkeits-Checkliste, Content-Lizenzierungs-Guide</div>
+              </div>
+              <div class="level-card lc-professional">
+                <div class="lc-name">Professional</div>
+                <div class="lc-desc">ainomics entwickelt maßgeschneiderte Trainingsdaten-Strategie: Content-Audit, Optimierungsplan für Crawlbarkeit und Lizenzierungs-Empfehlungen.</div>
+                <div class="lc-includes">Inkl.: Content-Audit, technische Optimierungen, Lizenzierungs-Strategie, Plattform-Empfehlungen</div>
+              </div>
+              <div class="level-card lc-enterprise">
+                <div class="lc-name">Enterprise</div>
+                <div class="lc-desc">Vollständige Trainingsdaten-Strategie + Begleitung bei der Umsetzung + laufende Beratung zu LLM-Lizenzierungs-Entwicklungen und Partnerschaften.</div>
+                <div class="lc-includes">Inkl.: Strategie + Implementierungs-Begleitung + halbjährliche Updates zu Marktentwicklungen, Partnerschafts-Evaluierung</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /service-list phase 3 -->
+  </div><!-- /phase-block -->
+
+  <!-- CTA -->
+  <div style="background:linear-gradient(135deg,#1f5164,#2E7287);border-radius:16px;padding:32px 36px;color:white;margin-top:8px;">
+    <h3 style="font-size:20px;font-weight:900;margin-bottom:10px;">Welches Service-Level passt zu Ihnen?</h3>
+    <p style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.65;margin-bottom:20px;max-width:580px;">Von der ersten Beratung bis zum vollständigen Managed-Service — ainomics begleitet Sie auf jedem Level Ihrer LLM-Sichtbarkeits-Reise. Der erste Schritt ist immer der LLM-Sichtbarkeits-Audit.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;">
+      <a href="https://ainomics.at/" target="_blank" style="font-size:12px;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;background:white;color:#1f5164;display:inline-block;">ainomics.at besuchen →</a>
+      <a href="03-leistungsportfolio.html" style="font-size:12px;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);display:inline-block;">← Zurück zum Leistungsportfolio</a>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a href="03-leistungsportfolio.html">← Kapitel 03: Leistungsportfolio</a>
+    <a href="04-zielkunden.html">Kapitel 04: Zielkunden →</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo">ainomics<sup style="font-size:9px;font-weight:400;">®</sup> <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:2px;">visible results</span></div>
+      <a href="https://ainomics.at/" target="_blank">ainomics.at</a>
+    </div>
+    <strong>Haftungsausschluss:</strong> LLM-Verhalten variiert je nach Plattform und ändert sich mit Modell-Updates. Stand Q1 2026.
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kunden-Dashboard | ainomics</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --brand:#2E7287; --brand-dk:#1f5164; --brand-lt:#3d8fa5;
+    --primary:#1f3d4a; --bg:#eef3f5; --surface:#fff;
+    --border:#c8dce3; --text:#1f3d4a; --muted:#4a7585;
+    --green:#1a9e6e; --green-bg:#edfaf5; --green-border:#a3e4cc;
+    --amber:#d97706; --amber-bg:#fffbeb; --amber-border:#fcd34d;
+    --red:#c0392b; --red-bg:#fef2f2; --red-border:#fca5a5;
+    --navy:#111827; --slate:#374151;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+  .page { max-width:1200px; margin:0 auto; padding:28px 24px; }
+
+  /* ── Nav ── */
+  .brand-bar { background:var(--brand); border-radius:14px; margin-bottom:20px; }
+  .brand-bar-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+  .brand-logo { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+  .brand-logo-wordmark { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .brand-logo-wordmark sup { font-size:11px; font-weight:400; vertical-align:super; }
+  .brand-logo-tagline { font-size:10px; color:rgba(255,255,255,0.6); letter-spacing:3px; }
+  .nav-back { font-size:12px; font-weight:700; color:rgba(255,255,255,0.8); text-decoration:none; }
+  .nav-back:hover { color:#fff; }
+  .breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:12px; color:var(--muted); }
+  .breadcrumb a { color:var(--brand); text-decoration:none; font-weight:600; }
+
+  /* ── Client Banner ── */
+  .client-banner {
+    background:linear-gradient(135deg,#1f5164 0%,#2E7287 60%,#3d8fa5 100%);
+    border-radius:16px; padding:28px 36px; margin-bottom:24px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:relative; overflow:hidden;
+  }
+  .client-banner::before {
+    content:''; position:absolute; right:-80px; top:-80px;
+    width:320px; height:320px;
+    background:radial-gradient(circle,rgba(93,188,210,0.12) 0%,transparent 70%);
+  }
+  .client-banner::after {
+    content:''; position:absolute; left:36%; bottom:-40px;
+    width:200px; height:200px;
+    background:radial-gradient(circle,rgba(255,255,255,0.04) 0%,transparent 70%);
+  }
+  .cb-left { position:relative; z-index:1; }
+  .cb-label { font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:6px; }
+  .cb-name { font-size:28px; font-weight:900; color:#fff; line-height:1.1; margin-bottom:4px; }
+  .cb-meta { font-size:12px; color:rgba(255,255,255,0.6); display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .cb-meta span { display:flex; align-items:center; gap:5px; }
+  .cb-meta-dot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,0.3); }
+  .cb-right { display:flex; flex-direction:column; align-items:flex-end; gap:12px; position:relative; z-index:1; }
+  .level-badge {
+    font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
+    padding:7px 18px; border-radius:8px; border:1.5px solid rgba(255,255,255,0.25);
+    color:#fff; background:rgba(255,255,255,0.12);
+  }
+  .cb-phase-row { display:flex; gap:8px; align-items:center; }
+  .cb-phase-pill {
+    font-size:10px; font-weight:700; padding:4px 12px; border-radius:6px;
+    background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5);
+    border:1px solid rgba(255,255,255,0.1);
+  }
+  .cb-phase-pill.aktiv {
+    background:rgba(255,255,255,0.18); color:#fff;
+    border-color:rgba(255,255,255,0.35);
+  }
+  .cb-update { font-size:10px; color:rgba(255,255,255,0.4); }
+
+  /* ── KPI Cards ── */
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  .kpi-card { background:#fff; border-radius:12px; border:1px solid var(--border); padding:20px 22px; position:relative; overflow:hidden; }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .kpi-card.kpi-brand::before { background:var(--brand); }
+  .kpi-card.kpi-green::before { background:var(--green); }
+  .kpi-card.kpi-navy::before { background:var(--navy); }
+  .kpi-card.kpi-slate::before { background:var(--slate); }
+  .kpi-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:10px; }
+  .kpi-value { font-size:32px; font-weight:900; color:var(--primary); line-height:1; margin-bottom:4px; }
+  .kpi-value sup { font-size:16px; font-weight:700; }
+  .kpi-value sub { font-size:14px; font-weight:600; color:var(--muted); }
+  .kpi-sub { font-size:11px; color:var(--muted); margin-bottom:12px; }
+  .kpi-trend { font-size:11px; font-weight:700; display:flex; align-items:center; gap:4px; }
+  .kpi-trend.up { color:var(--green); }
+  .kpi-trend.down { color:var(--red); }
+  .kpi-trend.neutral { color:var(--muted); }
+  .kpi-bar-wrap { margin-top:12px; }
+  .kpi-bar-track { height:4px; background:#eef3f5; border-radius:2px; overflow:hidden; }
+  .kpi-bar-fill { height:100%; border-radius:2px; transition:width 1s; }
+  .kpi-bar-meta { display:flex; justify-content:space-between; margin-top:4px; }
+  .kpi-bar-meta span { font-size:9px; font-weight:700; color:var(--muted); }
+
+  /* ── Section Header ── */
+  .section { margin-bottom:24px; }
+  .section-title { font-size:15px; font-weight:800; color:var(--primary); margin-bottom:16px; padding-bottom:10px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:10px; }
+  .section-title-tag { font-size:9px; font-weight:700; padding:3px 9px; border-radius:5px; background:var(--bg); color:var(--muted); border:1px solid var(--border); margin-left:auto; }
+
+  /* ── Phase Progress ── */
+  .phase-progress-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+  .progress-card { background:#fff; border-radius:12px; border:1px solid var(--border); padding:22px 24px; }
+  .progress-card-title { font-size:12px; font-weight:800; color:var(--primary); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+  .ph-row { margin-bottom:16px; }
+  .ph-row:last-child { margin-bottom:0; }
+  .ph-row-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+  .ph-row-label { display:flex; align-items:center; gap:8px; }
+  .ph-num-badge { font-size:9px; font-weight:900; padding:3px 8px; border-radius:5px; color:#fff; letter-spacing:1px; text-transform:uppercase; }
+  .ph-nb-1 { background:var(--navy); }
+  .ph-nb-2 { background:var(--brand); }
+  .ph-nb-3 { background:var(--slate); }
+  .ph-name { font-size:12px; font-weight:700; color:var(--text); }
+  .ph-pct { font-size:14px; font-weight:900; color:var(--primary); }
+  .ph-track { height:8px; background:#eef3f5; border-radius:4px; overflow:hidden; }
+  .ph-fill { height:100%; border-radius:4px; transition:width 1.2s cubic-bezier(.4,0,.2,1); }
+  .ph-fill-1 { background:linear-gradient(90deg,#111827,#374151); }
+  .ph-fill-2 { background:linear-gradient(90deg,var(--brand-dk),var(--brand-lt)); }
+  .ph-fill-3 { background:linear-gradient(90deg,#374151,#6b7280); }
+  .ph-row-foot { display:flex; justify-content:space-between; margin-top:5px; }
+  .ph-row-foot span { font-size:10px; color:var(--muted); }
+
+  /* ── Charts Row ── */
+  .charts-row { display:grid; grid-template-columns:1fr 360px; gap:16px; margin-bottom:24px; }
+  .chart-card { background:#fff; border-radius:12px; border:1px solid var(--border); padding:22px 24px; }
+  .chart-card-title { font-size:12px; font-weight:800; color:var(--primary); margin-bottom:4px; }
+  .chart-card-sub { font-size:11px; color:var(--muted); margin-bottom:18px; }
+  .chart-wrap { position:relative; }
+  .donut-legend { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+  .dl-row { display:flex; align-items:center; justify-content:space-between; }
+  .dl-left { display:flex; align-items:center; gap:8px; }
+  .dl-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+  .dl-label { font-size:11px; color:var(--muted); }
+  .dl-val { font-size:13px; font-weight:800; color:var(--primary); }
+  .dl-pct { font-size:10px; color:var(--muted); margin-left:4px; }
+
+  /* ── Phase Sections ── */
+  .phase-section { background:#fff; border-radius:12px; border:1px solid var(--border); margin-bottom:16px; overflow:hidden; }
+  .phase-section-head { display:flex; align-items:center; gap:0; border-bottom:1px solid var(--border); }
+  .psh-accent { width:5px; flex-shrink:0; align-self:stretch; }
+  .psh-accent-1 { background:var(--navy); }
+  .psh-accent-2 { background:var(--brand); }
+  .psh-accent-3 { background:var(--slate); }
+  .psh-inner { flex:1; display:flex; align-items:center; justify-content:space-between; padding:16px 22px; }
+  .psh-left { display:flex; align-items:center; gap:12px; }
+  .psh-badge { font-size:9px; font-weight:900; padding:4px 10px; border-radius:6px; color:#fff; letter-spacing:1.5px; text-transform:uppercase; }
+  .psh-badge-1 { background:var(--navy); }
+  .psh-badge-2 { background:var(--brand); }
+  .psh-badge-3 { background:var(--slate); }
+  .psh-title { font-size:15px; font-weight:900; color:var(--primary); }
+  .psh-sub { font-size:11px; color:var(--muted); }
+  .psh-right { display:flex; align-items:center; gap:10px; }
+  .status-chip { font-size:10px; font-weight:700; padding:4px 12px; border-radius:20px; }
+  .sc-done { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+  .sc-active { background:#eff8fb; color:var(--brand); border:1px solid #bddde8; }
+  .sc-pending { background:var(--bg); color:var(--muted); border:1px solid var(--border); }
+
+  .phase-section-body { padding:22px 24px; display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .phase-section-body.three-col { grid-template-columns:1fr 1fr 1fr; }
+  .phase-section-body.full { grid-template-columns:1fr; }
+
+  /* ── Metric Blocks ── */
+  .metric-block { }
+  .mb-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:8px; }
+  .mb-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f0f4f6; }
+  .mb-row:last-child { border-bottom:none; }
+  .mb-key { font-size:12px; color:var(--text); }
+  .mb-val { font-size:12px; font-weight:800; color:var(--primary); }
+  .mb-kpi-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .mb-kpi { background:var(--bg); border-radius:8px; padding:12px 14px; }
+  .mb-kpi-num { font-size:22px; font-weight:900; color:var(--primary); line-height:1; }
+  .mb-kpi-unit { font-size:11px; font-weight:600; color:var(--muted); }
+  .mb-kpi-label { font-size:10px; color:var(--muted); margin-top:4px; }
+
+  /* ── Service Checklist ── */
+  .services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
+  .svc-col { background:#fff; border-radius:12px; border:1px solid var(--border); overflow:hidden; }
+  .svc-col-head { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .svc-col-title { font-size:12px; font-weight:800; color:var(--primary); }
+  .svc-list { padding:8px 0; }
+  .svc-item { display:flex; align-items:center; gap:10px; padding:8px 18px; border-bottom:1px solid #f5f8fa; }
+  .svc-item:last-child { border-bottom:none; }
+  .svc-icon { width:18px; height:18px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px; flex-shrink:0; }
+  .si-done { background:var(--green-bg); color:var(--green); }
+  .si-active { background:#eff8fb; color:var(--brand); }
+  .si-pending { background:var(--bg); color:var(--muted); }
+  .svc-name { font-size:11px; color:var(--text); flex:1; line-height:1.4; }
+  .svc-status-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .sd-done { background:var(--green); }
+  .sd-active { background:var(--brand); }
+  .sd-pending { background:#c8dce3; }
+
+  /* ── PR/Media Section ── */
+  .pr-kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+  .pr-kpi { background:var(--bg); border-radius:10px; padding:14px 16px; border:1px solid var(--border); }
+  .pr-kpi-num { font-size:24px; font-weight:900; color:var(--primary); line-height:1; }
+  .pr-kpi-unit { font-size:11px; color:var(--muted); font-weight:600; }
+  .pr-kpi-label { font-size:10px; color:var(--muted); margin-top:4px; }
+
+  .outlets-list { display:flex; flex-direction:column; gap:6px; }
+  .outlet-row { display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:var(--bg); border-radius:8px; border:1px solid var(--border); }
+  .outlet-name { font-size:12px; font-weight:700; color:var(--text); }
+  .outlet-status { font-size:10px; font-weight:700; padding:3px 10px; border-radius:12px; }
+  .os-placed { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+  .os-negotiating { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-border); }
+  .os-open { background:var(--bg); color:var(--muted); border:1px solid var(--border); }
+
+  /* ── Last Updated ── */
+  .page-footer { text-align:center; padding:20px 0 8px; font-size:11px; color:var(--muted); }
+
+  /* ── Responsive ── */
+  @media (max-width:900px) {
+    .kpi-grid { grid-template-columns:1fr 1fr; }
+    .charts-row { grid-template-columns:1fr; }
+    .phase-progress-grid { grid-template-columns:1fr; }
+    .services-grid { grid-template-columns:1fr; }
+    .phase-section-body { grid-template-columns:1fr; }
+    .pr-kpi-row { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Nav -->
+  <div class="brand-bar">
+    <div class="brand-bar-inner">
+      <a href="index.html" class="brand-logo">
+        <span class="brand-logo-wordmark">ainomics<sup>®</sup></span>
+        <span class="brand-logo-tagline">visible results</span>
+      </a>
+      <a href="03-leistungsportfolio.html" class="nav-back">← Leistungsportfolio</a>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="index.html">Übersicht</a> ›
+    <span>Kunden-Dashboard</span>
+  </div>
+
+  <!-- Client Banner -->
+  <div class="client-banner">
+    <div class="cb-left">
+      <div class="cb-label">Kunden-Dashboard</div>
+      <div class="cb-name" id="cb-name">Mustermann GmbH</div>
+      <div class="cb-meta">
+        <span>Betreuer: <strong id="cb-betreuer" style="color:#fff">Anna Müller</strong></span>
+        <span class="cb-meta-dot"></span>
+        <span id="cb-laufzeit">Jan 2025 – Dez 2025</span>
+        <span class="cb-meta-dot"></span>
+        <span id="cb-branche">E-Commerce / Retail</span>
+      </div>
+    </div>
+    <div class="cb-right">
+      <div class="level-badge" id="cb-level">Professional</div>
+      <div class="cb-phase-row" id="cb-phase-row"></div>
+      <div class="cb-update" id="cb-update"></div>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-brand">
+      <div class="kpi-label">LLM-Sichtbarkeits-Score</div>
+      <div class="kpi-value"><span id="kpi-score">64</span><sub>/100</sub></div>
+      <div class="kpi-sub">Ziel: <span id="kpi-score-ziel">85</span> Punkte</div>
+      <div class="kpi-trend up" id="kpi-score-trend">▲ +8 ggü. Vorquartal</div>
+      <div class="kpi-bar-wrap">
+        <div class="kpi-bar-track">
+          <div class="kpi-bar-fill" id="kpi-score-bar" style="background:var(--brand);"></div>
+        </div>
+        <div class="kpi-bar-meta"><span>0</span><span>Ziel</span><span>100</span></div>
+      </div>
+    </div>
+    <div class="kpi-card kpi-green">
+      <div class="kpi-label">LLM-Zitierungen / Monat</div>
+      <div class="kpi-value"><span id="kpi-zit">342</span></div>
+      <div class="kpi-sub">Letzter Messzeitraum März 2025</div>
+      <div class="kpi-trend up" id="kpi-zit-trend">▲ +18% ggü. Vormonat</div>
+      <div class="kpi-bar-wrap">
+        <div class="kpi-bar-track">
+          <div class="kpi-bar-fill" id="kpi-zit-bar" style="background:var(--green);"></div>
+        </div>
+        <div class="kpi-bar-meta"><span>0</span><span>Ziel</span><span>500</span></div>
+      </div>
+    </div>
+    <div class="kpi-card kpi-navy">
+      <div class="kpi-label">Optimierte Inhalte</div>
+      <div class="kpi-value"><span id="kpi-content">24</span><sub> Seiten</sub></div>
+      <div class="kpi-sub">Ziel: <span id="kpi-content-ziel">40</span> Seiten</div>
+      <div class="kpi-trend neutral" id="kpi-content-trend">→ 4 in Bearbeitung</div>
+      <div class="kpi-bar-wrap">
+        <div class="kpi-bar-track">
+          <div class="kpi-bar-fill" id="kpi-content-bar" style="background:var(--navy);"></div>
+        </div>
+        <div class="kpi-bar-meta"><span>0</span><span>Ziel</span><span id="kpi-content-ziel2">40</span></div>
+      </div>
+    </div>
+    <div class="kpi-card kpi-slate">
+      <div class="kpi-label">Entity-Vollständigkeit</div>
+      <div class="kpi-value"><span id="kpi-entity">71</span><sup>%</sup></div>
+      <div class="kpi-sub">Wikidata · Knowledge Graph</div>
+      <div class="kpi-trend up" id="kpi-entity-trend">▲ +12% seit Projektstart</div>
+      <div class="kpi-bar-wrap">
+        <div class="kpi-bar-track">
+          <div class="kpi-bar-fill" id="kpi-entity-bar" style="background:var(--slate);"></div>
+        </div>
+        <div class="kpi-bar-meta"><span>0%</span><span>100%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase Progress + Donut -->
+  <div class="phase-progress-grid">
+    <div class="progress-card">
+      <div class="progress-card-title">
+        <span>📊</span> Phasen-Fortschritt
+      </div>
+      <div class="ph-row">
+        <div class="ph-row-head">
+          <div class="ph-row-label">
+            <span class="ph-num-badge ph-nb-1">Phase 01</span>
+            <span class="ph-name">Analysieren</span>
+          </div>
+          <span class="ph-pct" id="p1-pct">100%</span>
+        </div>
+        <div class="ph-track"><div class="ph-fill ph-fill-1" id="p1-bar"></div></div>
+        <div class="ph-row-foot"><span>Diagnose & Baseline</span><span class="status-chip sc-done">Abgeschlossen</span></div>
+      </div>
+      <div class="ph-row">
+        <div class="ph-row-head">
+          <div class="ph-row-label">
+            <span class="ph-num-badge ph-nb-2">Phase 02</span>
+            <span class="ph-name">Optimieren</span>
+          </div>
+          <span class="ph-pct" id="p2-pct">65%</span>
+        </div>
+        <div class="ph-track"><div class="ph-fill ph-fill-2" id="p2-bar"></div></div>
+        <div class="ph-row-foot"><span>Inhalte · Struktur · Entity</span><span class="status-chip sc-active">Aktiv</span></div>
+      </div>
+      <div class="ph-row">
+        <div class="ph-row-head">
+          <div class="ph-row-label">
+            <span class="ph-num-badge ph-nb-3">Phase 03</span>
+            <span class="ph-name">Entwickeln</span>
+          </div>
+          <span class="ph-pct" id="p3-pct">20%</span>
+        </div>
+        <div class="ph-track"><div class="ph-fill ph-fill-3" id="p3-bar"></div></div>
+        <div class="ph-row-foot"><span>Infrastruktur · PR · Skala</span><span class="status-chip sc-pending">Ausstehend</span></div>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-card-title"><span>🔵</span> Service-Status (18 Leistungen)</div>
+      <div class="chart-wrap" style="max-height:180px; display:flex; justify-content:center;">
+        <canvas id="donutChart" width="180" height="180"></canvas>
+      </div>
+      <div class="donut-legend">
+        <div class="dl-row">
+          <div class="dl-left"><div class="dl-dot" style="background:var(--green)"></div><span class="dl-label">Abgeschlossen</span></div>
+          <div><span class="dl-val" id="dl-done">10</span><span class="dl-pct">56%</span></div>
+        </div>
+        <div class="dl-row">
+          <div class="dl-left"><div class="dl-dot" style="background:var(--brand)"></div><span class="dl-label">In Bearbeitung</span></div>
+          <div><span class="dl-val" id="dl-active">4</span><span class="dl-pct">22%</span></div>
+        </div>
+        <div class="dl-row">
+          <div class="dl-left"><div class="dl-dot" style="background:#c8dce3"></div><span class="dl-label">Ausstehend</span></div>
+          <div><span class="dl-val" id="dl-pending">4</span><span class="dl-pct">22%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row: Zitierungen + Wettbewerber -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-card-title">Monatliche LLM-Zitierungen</div>
+      <div class="chart-card-sub">Entwicklung der Markenzitierungen in KI-Systemen (letzte 6 Monate)</div>
+      <canvas id="barChart" height="100"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Wettbewerber-Benchmark</div>
+      <div class="chart-card-sub">LLM-Sichtbarkeits-Score im Vergleich</div>
+      <canvas id="benchChart" height="180"></canvas>
+    </div>
+  </div>
+
+  <!-- Phase 01 Summary -->
+  <div class="phase-section">
+    <div class="phase-section-head">
+      <div class="psh-accent psh-accent-1"></div>
+      <div class="psh-inner">
+        <div class="psh-left">
+          <span class="psh-badge psh-badge-1">Phase 01</span>
+          <div>
+            <div class="psh-title">Analysieren</div>
+            <div class="psh-sub">Diagnose · Baseline · Wettbewerbsvergleich</div>
+          </div>
+        </div>
+        <div class="psh-right">
+          <span class="status-chip sc-done">✓ Abgeschlossen</span>
+        </div>
+      </div>
+    </div>
+    <div class="phase-section-body">
+      <div class="metric-block">
+        <div class="mb-label">Audit-Ergebnisse</div>
+        <div class="mb-row"><span class="mb-key">Auditierte LLM-Plattformen</span><span class="mb-val">5 / 5</span></div>
+        <div class="mb-row"><span class="mb-key">Identifizierte Content-Lücken</span><span class="mb-val">23</span></div>
+        <div class="mb-row"><span class="mb-key">Davon geschlossen</span><span class="mb-val">14 / 23</span></div>
+        <div class="mb-row"><span class="mb-key">Prompt-Mappings erstellt</span><span class="mb-val">38</span></div>
+        <div class="mb-row"><span class="mb-key">Baseline-Report</span><span class="mb-val" style="color:var(--green)">✓ Erstellt</span></div>
+      </div>
+      <div class="metric-block">
+        <div class="mb-label">Entity-Diagnose</div>
+        <div class="mb-row"><span class="mb-key">Wikidata-Eintrag</span><span class="mb-val" style="color:var(--green)">✓ Vorhanden</span></div>
+        <div class="mb-row"><span class="mb-key">Knowledge-Graph-Score</span><span class="mb-val">62 / 100</span></div>
+        <div class="mb-row"><span class="mb-key">Strukturierte Daten vorhanden</span><span class="mb-val">3 Schemas</span></div>
+        <div class="mb-row"><span class="mb-key">Zitierungsquellen identifiziert</span><span class="mb-val">47</span></div>
+        <div class="mb-row"><span class="mb-key">Prioritäts-Aktionsmatrix</span><span class="mb-val" style="color:var(--green)">✓ Erstellt</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 02 -->
+  <div class="phase-section">
+    <div class="phase-section-head">
+      <div class="psh-accent psh-accent-2"></div>
+      <div class="psh-inner">
+        <div class="psh-left">
+          <span class="psh-badge psh-badge-2">Phase 02</span>
+          <div>
+            <div class="psh-title">Optimieren</div>
+            <div class="psh-sub">Inhalte · Struktur · Entity-Daten · Drittquellen</div>
+          </div>
+        </div>
+        <div class="psh-right">
+          <span class="status-chip sc-active">● Aktiv — Sprint 4 von 6</span>
+        </div>
+      </div>
+    </div>
+    <div class="phase-section-body three-col">
+      <div class="metric-block">
+        <div class="mb-label">Content & Optimierung</div>
+        <div class="mb-row"><span class="mb-key">Optimierte Seiten</span><span class="mb-val">24 / 40</span></div>
+        <div class="mb-row"><span class="mb-key">FAQ-Cluster erstellt</span><span class="mb-val">8</span></div>
+        <div class="mb-row"><span class="mb-key">Autorenprofil-Score</span><span class="mb-val">74 / 100</span></div>
+        <div class="mb-row"><span class="mb-key">Keyword-Coverage LLMs</span><span class="mb-val">61%</span></div>
+      </div>
+      <div class="metric-block">
+        <div class="mb-label">Technisch & Entity</div>
+        <div class="mb-row"><span class="mb-key">Schema-Implementierungen</span><span class="mb-val">8</span></div>
+        <div class="mb-row"><span class="mb-key">Entity-Attribute ergänzt</span><span class="mb-val">34</span></div>
+        <div class="mb-row"><span class="mb-key">Drittquellen-Platzierungen</span><span class="mb-val">12</span></div>
+        <div class="mb-row"><span class="mb-key">Technische Zugänglichkeit</span><span class="mb-val" style="color:var(--amber)">⚠ 78%</span></div>
+      </div>
+      <div class="metric-block">
+        <div class="mb-label">Sprint-Status</div>
+        <div class="mb-kpi-row">
+          <div class="mb-kpi">
+            <div class="mb-kpi-num">4</div>
+            <div class="mb-kpi-label">Sprints abg.</div>
+          </div>
+          <div class="mb-kpi">
+            <div class="mb-kpi-num">6</div>
+            <div class="mb-kpi-label">Gesamt</div>
+          </div>
+          <div class="mb-kpi">
+            <div class="mb-kpi-num">+18<span class="mb-kpi-unit">%</span></div>
+            <div class="mb-kpi-label">Zitier.-Wachstum</div>
+          </div>
+          <div class="mb-kpi">
+            <div class="mb-kpi-num">2</div>
+            <div class="mb-kpi-label">Offene Punkte</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 03 -->
+  <div class="phase-section">
+    <div class="phase-section-head">
+      <div class="psh-accent psh-accent-3"></div>
+      <div class="psh-inner">
+        <div class="psh-left">
+          <span class="psh-badge psh-badge-3">Phase 03</span>
+          <div>
+            <div class="psh-title">Entwickeln</div>
+            <div class="psh-sub">Infrastruktur · Monitoring · PR & Medien · Langzeit-Autorität</div>
+          </div>
+        </div>
+        <div class="psh-right">
+          <span class="status-chip sc-pending">Gestartet — 20%</span>
+        </div>
+      </div>
+    </div>
+    <div class="phase-section-body full" style="padding-bottom:0;">
+
+      <!-- Infrastruktur & Monitoring -->
+      <div style="margin-bottom:20px;">
+        <div class="mb-label" style="margin-bottom:12px;">Infrastruktur & Monitoring</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; margin-bottom:16px;">
+          <div class="mb-kpi">
+            <div class="mb-kpi-num">4<span class="mb-kpi-unit"> / 5</span></div>
+            <div class="mb-kpi-label">Plattformen überwacht</div>
+          </div>
+          <div class="mb-kpi">
+            <div class="mb-kpi-num">64<span class="mb-kpi-unit"> Pkt</span></div>
+            <div class="mb-kpi-label">Authority-Score aktuell</div>
+          </div>
+          <div class="mb-kpi">
+            <div class="mb-kpi-num">3<span class="mb-kpi-unit"> / 10</span></div>
+            <div class="mb-kpi-label">Roadmap-Meilensteine</div>
+          </div>
+          <div class="mb-kpi">
+            <div class="mb-kpi-num" style="color:var(--green)">Aktiv</div>
+            <div class="mb-kpi-label">Retainer-Status</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PR / Medien -->
+      <div style="border-top:1px solid var(--border); padding-top:20px; margin-bottom:20px;">
+        <div class="mb-label" style="margin-bottom:12px;">PR & Medien-Performance</div>
+        <div class="pr-kpi-row">
+          <div class="pr-kpi">
+            <div class="pr-kpi-num">22</div>
+            <div class="pr-kpi-label">Medienerwähnungen (März)</div>
+          </div>
+          <div class="pr-kpi">
+            <div class="pr-kpi-num">7</div>
+            <div class="pr-kpi-label">Platzierte Pressemitteilungen</div>
+          </div>
+          <div class="pr-kpi">
+            <div class="pr-kpi-num">23</div>
+            <div class="pr-kpi-label">PR-Backlinks (kumuliert)</div>
+          </div>
+          <div class="pr-kpi">
+            <div class="pr-kpi-num">4,2<span class="pr-kpi-unit"> Mio.</span></div>
+            <div class="pr-kpi-label">Medien-Reichweite (est.)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PR Charts + Outlets -->
+      <div style="display:grid; grid-template-columns:1fr 280px; gap:20px; border-top:1px solid var(--border); padding-top:20px; padding-bottom:22px;">
+        <div>
+          <div class="mb-label" style="margin-bottom:12px;">Medienerwähnungen — Monatsverlauf</div>
+          <canvas id="prChart" height="100"></canvas>
+        </div>
+        <div>
+          <div class="mb-label" style="margin-bottom:12px;">Outlet-Status</div>
+          <div class="outlets-list" id="outlets-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Authority Score Trend -->
+  <div class="chart-card section" style="margin-bottom:24px;">
+    <div class="chart-card-title">Authority-Score-Verlauf</div>
+    <div class="chart-card-sub">Entwicklung des LLM-Autoritäts-Scores über die letzten 6 Monate</div>
+    <canvas id="authorityChart" height="80"></canvas>
+  </div>
+
+  <!-- Service Checklist -->
+  <div class="section-title">
+    <span>✅</span> Service-Checkliste — alle 18 Leistungen
+    <span class="section-title-tag">Stand: März 2025</span>
+  </div>
+  <div class="services-grid" id="services-grid"></div>
+
+  <div class="page-footer" id="page-footer"></div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CLIENT CONFIG — hier je Kunde anpassen
+   ═══════════════════════════════════════════════ */
+const CLIENT = {
+  name: "Mustermann GmbH",
+  branche: "E-Commerce / Retail",
+  level: "Professional",      // Essential | Professional | Enterprise
+  betreuer: "Anna Müller",
+  start: "Januar 2025",
+  ende: "Dezember 2025",
+  aktivPhase: 2,
+  updateDatum: "28. März 2025",
+
+  kpis: {
+    llmScore:            64,
+    llmScoreZiel:        85,
+    llmScoreTrend:       "+8 ggü. Vorquartal",
+    zitierungen:         342,
+    zitierungenZiel:     500,
+    zitierungenTrend:    "+18% ggü. Vormonat",
+    optimierteInhalte:   24,
+    optimierteInhalteZiel: 40,
+    entityProzent:       71,
+    entityTrend:         "+12% seit Projektstart",
+  },
+
+  phasen: {
+    p1: 100,
+    p2: 65,
+    p3: 20,
+  },
+
+  serviceStatus: {
+    done: 10,
+    active: 4,
+    pending: 4,
+  },
+
+  // Monatliche Zitierungen (6 Monate)
+  zitierungenVerlauf: {
+    monate: ['Okt', 'Nov', 'Dez', 'Jan', 'Feb', 'Mär'],
+    werte:  [180,   210,   245,   280,   315,   342],
+  },
+
+  // Wettbewerber-Benchmark
+  benchmark: {
+    labels: ['Mustermann GmbH', 'Wettb. A', 'Wettb. B', 'Wettb. C', 'Ø Branche'],
+    werte:  [64, 58, 71, 49, 55],
+  },
+
+  // Authority Score Verlauf
+  authorityScore: {
+    monate: ['Okt', 'Nov', 'Dez', 'Jan', 'Feb', 'Mär'],
+    werte:  [45,    48,    52,    55,    59,    64],
+  },
+
+  // PR Medienerwähnungen
+  prErwaehnung: {
+    monate: ['Okt', 'Nov', 'Dez', 'Jan', 'Feb', 'Mär'],
+    werte:  [8,     12,    15,    11,    18,    22],
+  },
+
+  // Outlet-Status
+  outlets: [
+    { name: 'Der Standard',      status: 'platziert'      },
+    { name: 'Trending Topics',   status: 'platziert'      },
+    { name: 'brutkasten',        status: 'platziert'      },
+    { name: 'APA',               status: 'in Verhandlung' },
+    { name: 'Forbes Austria',    status: 'in Verhandlung' },
+    { name: 'Wirtschaftsblatt',  status: 'offen'          },
+  ],
+
+  // 18 Services mit Status
+  services: [
+    // Phase 01
+    { phase:1, name:'LLM-Sichtbarkeits-Audit',           status:'done'    },
+    { phase:1, name:'Entity-Profil-Bewertung',           status:'done'    },
+    { phase:1, name:'Content-Gap-Analyse',               status:'done'    },
+    { phase:1, name:'Wettbewerbs-Benchmark',             status:'done'    },
+    { phase:1, name:'Technisches SEO-Audit (LLM)',       status:'done'    },
+    { phase:1, name:'Zitierungsquellen-Analyse',         status:'done'    },
+    { phase:1, name:'Prompt-Mapping',                    status:'done'    },
+    { phase:1, name:'Baseline-Report & Aktionsmatrix',   status:'done'    },
+    // Phase 02
+    { phase:2, name:'Content-Optimierung für LLMs',      status:'done'    },
+    { phase:2, name:'Strukturierte Daten & Schema',      status:'done'    },
+    { phase:2, name:'Entity-Daten-Aufbau',               status:'active'  },
+    { phase:2, name:'Drittquellen-Platzierungen',        status:'active'  },
+    { phase:2, name:'FAQ & Conversational Content',      status:'active'  },
+    { phase:2, name:'Autorenprofil-Optimierung',         status:'active'  },
+    { phase:2, name:'Zitierungsmonitoring & Reporting',  status:'pending' },
+    { phase:2, name:'Technische LLM-Accessibility',      status:'pending' },
+    // Phase 03
+    { phase:3, name:'LLM-Monitoring & Alerting',         status:'active'  },
+    { phase:3, name:'Authority-Score-Tracking',          status:'active'  },
+    { phase:3, name:'Proprietäre Datenbasis',            status:'pending' },
+    { phase:3, name:'PR & Medien-Outreach',              status:'active'  },
+    { phase:3, name:'Linkbuilding & Backlink-Strategie', status:'pending' },
+    { phase:3, name:'Medien-Platzierungen & Presse',     status:'active'  },
+    { phase:3, name:'Langzeit-Roadmap & Meilensteine',   status:'pending' },
+    { phase:3, name:'Retainer & Optimierung',            status:'active'  },
+  ],
+};
+
+/* ═══════════════════════════════════════════════
+   RENDER CLIENT INFO
+   ═══════════════════════════════════════════════ */
+document.getElementById('cb-name').textContent     = CLIENT.name;
+document.getElementById('cb-betreuer').textContent = CLIENT.betreuer;
+document.getElementById('cb-laufzeit').textContent = CLIENT.start + ' – ' + CLIENT.ende;
+document.getElementById('cb-branche').textContent  = CLIENT.branche;
+document.getElementById('cb-level').textContent    = CLIENT.level;
+document.getElementById('cb-update').textContent   = 'Zuletzt aktualisiert: ' + CLIENT.updateDatum;
+
+// Phase pills
+const phaseRow = document.getElementById('cb-phase-row');
+['Analysieren','Optimieren','Entwickeln'].forEach((p,i) => {
+  const pill = document.createElement('span');
+  pill.className = 'cb-phase-pill' + (i+1 === CLIENT.aktivPhase ? ' aktiv' : '');
+  pill.textContent = `P0${i+1} ${p}`;
+  phaseRow.appendChild(pill);
+});
+
+/* ═══════════════════════════════════════════════
+   RENDER KPI CARDS
+   ═══════════════════════════════════════════════ */
+const K = CLIENT.kpis;
+document.getElementById('kpi-score').textContent      = K.llmScore;
+document.getElementById('kpi-score-ziel').textContent = K.llmScoreZiel;
+document.getElementById('kpi-score-trend').textContent= '▲ ' + K.llmScoreTrend;
+document.getElementById('kpi-score-bar').style.width  = (K.llmScore / 100 * 100) + '%';
+
+document.getElementById('kpi-zit').textContent        = K.zitierungen;
+document.getElementById('kpi-zit-trend').textContent  = '▲ ' + K.zitierungenTrend;
+document.getElementById('kpi-zit-bar').style.width    = Math.min(K.zitierungen / K.zitierungenZiel * 100, 100) + '%';
+
+document.getElementById('kpi-content').textContent         = K.optimierteInhalte;
+document.getElementById('kpi-content-ziel').textContent    = K.optimierteInhalteZiel;
+document.getElementById('kpi-content-ziel2').textContent   = K.optimierteInhalteZiel;
+document.getElementById('kpi-content-bar').style.width     = Math.min(K.optimierteInhalte / K.optimierteInhalteZiel * 100, 100) + '%';
+
+document.getElementById('kpi-entity').textContent     = K.entityProzent;
+document.getElementById('kpi-entity-trend').textContent = '▲ ' + K.entityTrend;
+document.getElementById('kpi-entity-bar').style.width = K.entityProzent + '%';
+
+/* ═══════════════════════════════════════════════
+   RENDER PHASE BARS
+   ═══════════════════════════════════════════════ */
+const P = CLIENT.phasen;
+document.getElementById('p1-pct').textContent = P.p1 + '%';
+document.getElementById('p2-pct').textContent = P.p2 + '%';
+document.getElementById('p3-pct').textContent = P.p3 + '%';
+setTimeout(() => {
+  document.getElementById('p1-bar').style.width = P.p1 + '%';
+  document.getElementById('p2-bar').style.width = P.p2 + '%';
+  document.getElementById('p3-bar').style.width = P.p3 + '%';
+}, 100);
+
+/* ═══════════════════════════════════════════════
+   RENDER SERVICE STATUS DONUT LEGEND
+   ═══════════════════════════════════════════════ */
+const S = CLIENT.serviceStatus;
+document.getElementById('dl-done').textContent    = S.done;
+document.getElementById('dl-active').textContent  = S.active;
+document.getElementById('dl-pending').textContent = S.pending;
+
+/* ═══════════════════════════════════════════════
+   RENDER OUTLETS
+   ═══════════════════════════════════════════════ */
+const outletsList = document.getElementById('outlets-list');
+CLIENT.outlets.forEach(o => {
+  const row = document.createElement('div');
+  row.className = 'outlet-row';
+  const cls = o.status === 'platziert' ? 'os-placed' : o.status === 'in Verhandlung' ? 'os-negotiating' : 'os-open';
+  const label = o.status === 'platziert' ? '✓ Platziert' : o.status === 'in Verhandlung' ? '⟳ Verhandlung' : '○ Offen';
+  row.innerHTML = `<span class="outlet-name">${o.name}</span><span class="outlet-status ${cls}">${label}</span>`;
+  outletsList.appendChild(row);
+});
+
+/* ═══════════════════════════════════════════════
+   RENDER SERVICE CHECKLIST
+   ═══════════════════════════════════════════════ */
+const phaseNames = ['Analysieren','Optimieren','Entwickeln'];
+const phaseSubs  = ['Diagnose & Baseline','Aufbau & Umsetzung','Infrastruktur & Skala'];
+const grid = document.getElementById('services-grid');
+
+[1,2,3].forEach(ph => {
+  const col = document.createElement('div');
+  col.className = 'svc-col';
+
+  const badgeClass = ['psh-badge-1','psh-badge-2','psh-badge-3'][ph-1];
+  col.innerHTML = `
+    <div class="svc-col-head">
+      <span class="psh-badge ${badgeClass}" style="font-size:8px;padding:3px 8px;">Phase 0${ph}</span>
+      <div>
+        <div class="svc-col-title">${phaseNames[ph-1]}</div>
+      </div>
+    </div>
+    <div class="svc-list" id="svc-list-${ph}"></div>
+  `;
+  grid.appendChild(col);
+
+  const list = col.querySelector(`#svc-list-${ph}`);
+  CLIENT.services.filter(s => s.phase === ph).forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'svc-item';
+    const iconClass = s.status === 'done' ? 'si-done' : s.status === 'active' ? 'si-active' : 'si-pending';
+    const dotClass  = s.status === 'done' ? 'sd-done' : s.status === 'active' ? 'sd-active' : 'sd-pending';
+    const icon      = s.status === 'done' ? '✓' : s.status === 'active' ? '●' : '○';
+    item.innerHTML  = `
+      <div class="svc-icon ${iconClass}">${icon}</div>
+      <span class="svc-name">${s.name}</span>
+      <div class="svc-status-dot ${dotClass}"></div>
+    `;
+    list.appendChild(item);
+  });
+});
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════ */
+document.getElementById('page-footer').textContent =
+  'ainomics® · Kunden-Dashboard · Stand: ' + CLIENT.updateDatum;
+
+/* ═══════════════════════════════════════════════
+   CHART.JS DEFAULTS
+   ═══════════════════════════════════════════════ */
+Chart.defaults.font.family = "'Montserrat', system-ui, sans-serif";
+Chart.defaults.font.size   = 11;
+Chart.defaults.color       = '#4a7585';
+
+const brandColor  = '#2E7287';
+const greenColor  = '#1a9e6e';
+const navyColor   = '#111827';
+const slateColor  = '#374151';
+const bgColor     = '#eef3f5';
+
+/* ── Donut: Service Status ── */
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Abgeschlossen','In Bearbeitung','Ausstehend'],
+    datasets:[{
+      data: [S.done, S.active, S.pending],
+      backgroundColor: [greenColor, brandColor, '#c8dce3'],
+      borderWidth: 0,
+      hoverOffset: 4,
+    }]
+  },
+  options: {
+    cutout: '72%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: ${ctx.raw} Services`
+        }
+      }
+    }
+  }
+});
+
+/* ── Bar: Monatliche Zitierungen ── */
+const ZV = CLIENT.zitierungenVerlauf;
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ZV.monate,
+    datasets:[{
+      label: 'LLM-Zitierungen',
+      data: ZV.werte,
+      backgroundColor: ZV.monate.map((_,i) => i === ZV.monate.length-1 ? brandColor : '#bddde8'),
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    plugins: { legend:{ display:false } },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color:'#eef3f5' },
+        ticks: { stepSize:100 }
+      },
+      x: { grid: { display:false } }
+    }
+  }
+});
+
+/* ── Bar: Wettbewerber Benchmark ── */
+const BM = CLIENT.benchmark;
+new Chart(document.getElementById('benchChart'), {
+  type: 'bar',
+  data: {
+    labels: BM.labels,
+    datasets:[{
+      label: 'LLM-Score',
+      data: BM.werte,
+      backgroundColor: BM.labels.map((l,i) => i===0 ? brandColor : '#c8dce3'),
+      borderRadius: 5,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend:{ display:false } },
+    scales: {
+      x: {
+        beginAtZero: true, max:100,
+        grid:{ color:'#eef3f5' },
+        ticks:{ callback: v => v }
+      },
+      y: { grid:{ display:false } }
+    }
+  }
+});
+
+/* ── Bar: PR Medienerwähnungen ── */
+const PR = CLIENT.prErwaehnung;
+new Chart(document.getElementById('prChart'), {
+  type: 'bar',
+  data: {
+    labels: PR.monate,
+    datasets:[{
+      label: 'Medienerwähnungen',
+      data: PR.werte,
+      backgroundColor: PR.monate.map((_,i) => i === PR.monate.length-1 ? slateColor : '#b0bec5'),
+      borderRadius: 5,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    plugins: { legend:{ display:false } },
+    scales: {
+      y: { beginAtZero:true, grid:{ color:'#eef3f5' } },
+      x: { grid:{ display:false } }
+    }
+  }
+});
+
+/* ── Line: Authority Score ── */
+const AS = CLIENT.authorityScore;
+new Chart(document.getElementById('authorityChart'), {
+  type: 'line',
+  data: {
+    labels: AS.monate,
+    datasets:[{
+      label: 'Authority-Score',
+      data: AS.werte,
+      borderColor: brandColor,
+      backgroundColor: 'rgba(46,114,135,0.08)',
+      borderWidth: 2.5,
+      pointRadius: 5,
+      pointBackgroundColor: '#fff',
+      pointBorderColor: brandColor,
+      pointBorderWidth: 2,
+      fill: true,
+      tension: 0.35,
+    }]
+  },
+  options: {
+    plugins: { legend:{ display:false } },
+    scales: {
+      y: {
+        min: 30, max: 100,
+        grid:{ color:'#eef3f5' },
+        ticks:{ callback: v => v + ' Pkt' }
+      },
+      x: { grid:{ display:false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
